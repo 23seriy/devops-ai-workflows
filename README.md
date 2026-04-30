@@ -16,9 +16,16 @@ A growing collection of **AI-agent workflows, runbooks, prompts, and rules** for
 
 ## Available workflows
 
+### Kubernetes
+
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [k8s-debug](./.windsurf/workflows/k8s-debug.md) | `/k8s-debug` | General-purpose, read-only Kubernetes cluster diagnostics across nodes, pods, workloads, networking, storage, RBAC, events, and resource pressure. Produces a timestamped Markdown report. | `kubectl` configured for the target cluster. Optional: `jq`, `metrics-server`. |
+| [k8s-debug](./.windsurf/workflows/k8s-debug.md) | `/k8s-debug` | General-purpose, read-only cluster diagnostics across nodes, pods, workloads, networking, storage, RBAC, events, and resource pressure. | `kubectl`. Optional: `jq`, metrics-server. |
+| [k8s-workload-debug](./.windsurf/workflows/k8s-workload-debug.md) | `/k8s-workload-debug` | Deep-dive on a single Deployment / StatefulSet / DaemonSet / Job / Pod: rollout, spec, probes, resources, logs, networking, storage, config. | `kubectl`. Optional: `jq`, metrics-server. |
+| [k8s-rbac-audit](./.windsurf/workflows/k8s-rbac-audit.md) | `/k8s-rbac-audit` | RBAC risk audit — wildcards, cluster-admin bindings, risky verb/resource combos, over-privileged ServiceAccounts, anonymous access. | `kubectl`, `jq`. Optional: `kubectl-who-can`. |
+| [k8s-cost-hotspots](./.windsurf/workflows/k8s-cost-hotspots.md) | `/k8s-cost-hotspots` | Find waste: over-provisioned workloads, missing requests/limits, idle workloads, orphan PVCs/PVs, idle LoadBalancers. | `kubectl`, `jq`, metrics-server. |
+| [k8s-upgrade-readiness](./.windsurf/workflows/k8s-upgrade-readiness.md) | `/k8s-upgrade-readiness` | Pre-flight before a control-plane / node upgrade: deprecated APIs, version skew, PDB gaps, expiring certs, broken webhooks. | `kubectl`. Optional: `kubent` or `pluto`, `helm`. |
+| [helm-release-debug](./.windsurf/workflows/helm-release-debug.md) | `/helm-release-debug` | Diagnose a stuck or failed Helm release: history, values diff, hook failures, rendered manifest vs cluster, workload health. | `helm` v3, `kubectl`. Optional: `jq`, `yq`. |
 
 More on the way — see [Roadmap](#roadmap).
 
@@ -67,14 +74,43 @@ devops-ai-workflows/
 
 Ideas I plan to add (PRs welcome):
 
-- [ ] `/aws-audit` — read-only AWS account hygiene check (IAM, S3, EC2, security groups, costs)
-- [ ] `/terraform-review` — review a `terraform plan` output for risky changes
-- [ ] `/helm-diff` — explain a Helm release upgrade diff
+**AWS / cloud**
+- [ ] `/aws-account-audit` — read-only AWS account hygiene (IAM, S3, EC2, SGs, CloudTrail, encryption)
+- [ ] `/aws-cost-quickscan` — top spenders, idle resources, anomalies
+- [ ] `/aws-iam-policy-review` — explain a policy and flag risky permissions
+- [ ] `/aws-vpc-debug` — connectivity triage across SGs / NACLs / routes / endpoints
+
+**IaC**
+- [ ] `/terraform-plan-review` — explain a `terraform plan` and highlight risky changes
+- [ ] `/terraform-state-debug` — diagnose locks, drift, orphans
+- [ ] `/iac-secrets-scan` — repo-wide hardcoded-secret sweep
+
+**Containers & CI/CD**
+- [ ] `/dockerfile-review` — security, size, cache, and CVE-prone bases
+- [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
+- [ ] `/ci-debug` — diagnose a failing GitHub Actions / GitLab / Jenkins pipeline
+- [ ] `/github-actions-review` — security review of workflow files
+- [ ] `/release-checklist` — pre-release gate
+
+**Observability & incident**
+- [ ] `/prometheus-query-helper` — intent → PromQL with rationale
+- [ ] `/log-pattern-extract` — cluster repeated errors out of a log dump
 - [ ] `/incident-triage` — guided first 15 minutes of an incident
-- [ ] `/postmortem` — generate a blameless post-mortem from chat/incident transcript
-- [ ] `/ci-debug` — diagnose a failing GitHub Actions / Jenkins / GitLab pipeline
-- [ ] `/dockerfile-review` — security and size review of a Dockerfile
-- [ ] `/image-cve-scan` — walk through a container CVE report and prioritise fixes
+- [ ] `/postmortem` — blameless post-mortem from a transcript
+- [ ] `/runbook-from-incident` — turn a resolved incident into a reusable runbook
+
+**Networking / database**
+- [ ] `/dns-debug` — multi-resolver dig, propagation, DNSSEC
+- [ ] `/tls-cert-audit` — chain inspection, expiry, weak ciphers across a list of hosts
+- [ ] `/postgres-health` — bloat, long queries, replication lag, missing indexes
+- [ ] `/redis-health` — memory pressure, slow log, persistence config, eviction patterns
+- [ ] `/db-migration-review` — flag risky migration patterns
+
+**Security & repo hygiene**
+- [ ] `/secrets-leak-scan` — gitleaks/trufflehog over full git history
+- [ ] `/cve-impact-assessment` — given a CVE, check whether your stack is affected
+- [ ] `/repo-health` — README, license, CI, branch protection, stale branches
+- [ ] `/dependency-upgrade-plan` — group outdated deps by risk and suggest batching
 
 ## Contributing
 
