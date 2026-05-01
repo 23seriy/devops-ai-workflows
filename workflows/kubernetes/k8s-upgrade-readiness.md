@@ -1,5 +1,6 @@
 ---
 description: Pre-flight check before a Kubernetes control-plane / node upgrade. Scans for deprecated APIs, version skew, PDB gaps, expiring certs, and risky workload patterns. Read-only, produces a Markdown report.
+auto_execution_mode: 2
 ---
 
 # /k8s-upgrade-readiness — Cluster Upgrade Pre-Flight

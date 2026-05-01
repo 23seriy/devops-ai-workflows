@@ -4,7 +4,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
 
 ## Adding a new workflow
 
-1. **Create the Windsurf version** at `.windsurf/workflows/<name>.md` with this skeleton:
+1. **Create the workflow** at `workflows/<domain>/<name>.md` with this skeleton:
 
    ```markdown
    ---
@@ -32,17 +32,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
    Write `./<name>-reports/<name>-<timestamp>.md` summarising findings.
    ```
 
-2. **Create the tool-agnostic copy** at `runbooks/<name>.md` — same content, but **remove**:
-   - the YAML frontmatter (`---` block at the top), and
-   - all `// turbo` lines.
-
-   You can regenerate it with:
-   ```bash
-   awk 'BEGIN{infm=0} NR==1 && /^---$/ {infm=1; next} infm && /^---$/ {infm=0; next} infm {next} /^\/\/ turbo[[:space:]]*$/ {next} {print}' \
-     .windsurf/workflows/<name>.md > runbooks/<name>.md
-   ```
-
-3. **Register it** in the *Available workflows* table in [`README.md`](./README.md).
+2. **Register it** in the *Available workflows* table in [`README.md`](./README.md).
 
 ## Workflow design rules
 
@@ -57,8 +47,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
 
 ## PR checklist
 
-- [ ] `.windsurf/workflows/<name>.md` added with frontmatter
-- [ ] `runbooks/<name>.md` added (frontmatter + `// turbo` stripped)
+- [ ] `workflows/<domain>/<name>.md` added
 - [ ] README *Available workflows* table updated
 - [ ] All commands are read-only or gated behind an opt-in flag
 - [ ] No secret values printed
