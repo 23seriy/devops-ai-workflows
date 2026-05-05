@@ -26,6 +26,15 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [k8s-upgrade-readiness](./workflows/kubernetes/k8s-upgrade-readiness.md) | `/k8s-upgrade-readiness` | Pre-flight before a control-plane / node upgrade: deprecated APIs, version skew, PDB gaps, expiring certs, broken webhooks. | `kubectl`. Optional: `kubent` or `pluto`, `helm`. |
 | [helm-release-debug](./workflows/kubernetes/helm-release-debug.md) | `/helm-release-debug` | Diagnose a stuck or failed Helm release: history, values diff, hook failures, rendered manifest vs cluster, workload health. | `helm` v3, `kubectl`. Optional: `jq`, `yq`. |
 
+### AWS / Cloud
+
+| Workflow | Slash command | Description | Prerequisites |
+|---|---|---|---|
+| [aws-account-audit](./workflows/aws/aws-account-audit.md) | `/aws-account-audit` | Read-only AWS account security & hygiene audit: IAM, S3, EC2, RDS, CloudTrail, encryption, GuardDuty, SecurityHub. | `aws` CLI. Optional: `jq`. |
+| [aws-cost-quickscan](./workflows/aws/aws-cost-quickscan.md) | `/aws-cost-quickscan` | Find AWS cost waste: idle EC2/RDS, unattached EBS, old snapshots, expensive log groups, NAT data processing, missing Savings Plans. | `aws` CLI, Cost Explorer enabled. Optional: `jq`. |
+| [aws-vpc-debug](./workflows/aws/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
+| [aws-iam-policy-review](./workflows/aws/aws-iam-policy-review.md) | `/aws-iam-policy-review` | Explain an IAM policy and flag risks: admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions. | `aws` CLI. Optional: `jq`. |
+
 More on the way — see [Roadmap](#roadmap).
 
 ## Using a workflow
@@ -47,7 +56,8 @@ Every workflow is just Markdown with shell commands. You can run the steps yours
 ```
 devops-ai-workflows/
 ├── workflows/
-│   └── kubernetes/          # Kubernetes workflow definitions
+│   ├── kubernetes/          # Kubernetes workflow definitions
+│   └── aws/                 # AWS / cloud workflow definitions
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files
 ├── scripts/                 # Standalone shell helpers
@@ -61,10 +71,10 @@ devops-ai-workflows/
 Ideas I plan to add (PRs welcome):
 
 **AWS / cloud**
-- [ ] `/aws-account-audit` — read-only AWS account hygiene (IAM, S3, EC2, SGs, CloudTrail, encryption)
-- [ ] `/aws-cost-quickscan` — top spenders, idle resources, anomalies
-- [ ] `/aws-iam-policy-review` — explain a policy and flag risky permissions
-- [ ] `/aws-vpc-debug` — connectivity triage across SGs / NACLs / routes / endpoints
+- [ ] `/aws-eks-debug` — bridge EKS + Kubernetes: node groups, OIDC, add-ons, IAM roles for service accounts
+- [ ] `/aws-rds-health` — RDS/Aurora diagnostics: events, metrics, parameter groups, replication lag
+- [ ] `/aws-lambda-debug` — Lambda diagnostics: errors, throttles, DLQ, VPC/ENI, CloudWatch logs
+- [ ] `/aws-ecs-service-debug` — ECS/Fargate service rollout failures: task events, target group health, IAM roles
 
 **IaC**
 - [ ] `/terraform-plan-review` — explain a `terraform plan` and highlight risky changes
