@@ -35,6 +35,19 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [aws-vpc-debug](./workflows/aws/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
 | [aws-iam-policy-review](./workflows/aws/aws-iam-policy-review.md) | `/aws-iam-policy-review` | Explain an IAM policy and flag risks: admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions. | `aws` CLI. Optional: `jq`. |
 
+### IaC
+
+| Workflow | Slash command | Description | Prerequisites |
+|---|---|---|---|
+| [terraform-plan-review](./workflows/iac/terraform-plan-review.md) | `/terraform-plan-review` | Explain a Terraform plan and flag risky changes: destroys, replacements, security group mutations, IAM changes, blast radius. | `terraform plan` output. Optional: `terraform` CLI, `jq`. |
+
+### Containers & CI/CD
+
+| Workflow | Slash command | Description | Prerequisites |
+|---|---|---|---|
+| [ci-debug](./workflows/cicd/ci-debug.md) | `/ci-debug` | Diagnose a failing CI/CD pipeline: parse build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines. Root cause analysis and fix suggestions. | Build log output. Optional: repo source, CI config file. |
+| [dockerfile-review](./workflows/containers/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
+
 More on the way — see [Roadmap](#roadmap).
 
 ## Using a workflow
@@ -57,7 +70,10 @@ Every workflow is just Markdown with shell commands. You can run the steps yours
 devops-ai-workflows/
 ├── workflows/
 │   ├── kubernetes/          # Kubernetes workflow definitions
-│   └── aws/                 # AWS / cloud workflow definitions
+│   ├── aws/                 # AWS / cloud workflow definitions
+│   ├── iac/                 # Infrastructure as Code workflows
+│   ├── cicd/                # CI/CD pipeline workflows
+│   └── containers/          # Container & image workflows
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files
 ├── scripts/                 # Standalone shell helpers
@@ -77,14 +93,11 @@ Ideas I plan to add (PRs welcome):
 - [ ] `/aws-ecs-service-debug` — ECS/Fargate service rollout failures: task events, target group health, IAM roles
 
 **IaC**
-- [ ] `/terraform-plan-review` — explain a `terraform plan` and highlight risky changes
 - [ ] `/terraform-state-debug` — diagnose locks, drift, orphans
 - [ ] `/iac-secrets-scan` — repo-wide hardcoded-secret sweep
 
 **Containers & CI/CD**
-- [ ] `/dockerfile-review` — security, size, cache, and CVE-prone bases
 - [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
-- [ ] `/ci-debug` — diagnose a failing GitHub Actions / GitLab / Jenkins pipeline
 - [ ] `/github-actions-review` — security review of workflow files
 - [ ] `/release-checklist` — pre-release gate
 
