@@ -138,14 +138,72 @@ Common patterns to flag:
 
 ## Step 5 — Logs from problem pods
 
-For each problem pod found in Step 4:
+For each problem pod found in Step 4, collect logs systematically:
+
+### 5a — Current and previous container logs
 
 ```bash
+# Current logs for all containers
 kubectl logs -n <ns> <pod> --all-containers --tail=$LOG_TAIL --timestamps
+
+# Previous container logs (captures crash output before restart)
 kubectl logs -n <ns> <pod> --all-containers --previous --tail=$LOG_TAIL --timestamps 2>/dev/null
 ```
 
-Search the captured logs for: `error`, `fatal`, `panic`, `exception`, `traceback`, `failed`, `timeout`, `refused`, `denied`, `unauthorized`, `OOM`, `evicted`, `connection reset`, `no such host`, `dial tcp`. Group identical messages and report counts plus first/last timestamp.
+### 5b — Init container logs (commonly missed)
+
+Init containers are a frequent source of stuck pods. Check them explicitly:
+
+```bash
+# List init container names
+kubectl get pod -n <ns> <pod> -o jsonpath='{.spec.initContainers[*].name}'
+
+# Logs for each init container
+for ic in $(kubectl get pod -n <ns> <pod> -o jsonpath='{.spec.initContainers[*].name}'); do
+  echo "=== init-container: $ic ==="
+  kubectl logs -n <ns> <pod> -c $ic --tail=$LOG_TAIL --timestamps 2>/dev/null
+done
+```
+
+### 5c — Structured error extraction
+
+Scan all collected logs for error patterns and build an aggregated error table:
+
+```bash
+# Extract error lines with severity classification
+kubectl logs -n <ns> <pod> --all-containers --tail=$LOG_TAIL --timestamps 2>/dev/null | \
+  grep -iE 'error|fatal|panic|exception|traceback|failed|timeout|refused|denied|unauthorized|OOM|evicted|connection reset|no such host|dial tcp|SIGTERM|SIGKILL|killed|backoff|certificate|x509|tls' | \
+  sort | uniq -c | sort -rn | head -30
+```
+
+### 5d — Log analysis guidance
+
+Classify found errors by severity:
+
+| Severity | Patterns | Likely cause |
+|---|---|---|
+| 🔴 Fatal | `panic`, `fatal`, `SIGKILL`, `OOMKilled`, exit 137 | App crash, OOM, kernel kill |
+| 🔴 Auth/TLS | `x509`, `certificate`, `tls handshake`, `unauthorized`, `forbidden` | Expired cert, wrong CA, RBAC |
+| 🟡 Connectivity | `connection refused`, `no such host`, `dial tcp`, `i/o timeout`, `ECONNREFUSED` | Service down, DNS, network policy |
+| 🟡 Dependency | `timeout`, `deadline exceeded`, `context canceled`, `backoff` | Upstream slow or down |
+| 🔵 App error | `error`, `failed`, `exception`, `traceback` | Application bug, bad config |
+
+For **high-restart pods**, compare previous logs vs current logs — if the error is the same, it's a persistent issue; if different, it may be a startup-order dependency.
+
+### 5e — Broad log scan (optional, when FOCUS_LABEL is not set)
+
+If no specific problem pods are found but the user suspects issues, scan all running pods for recent errors:
+
+```bash
+SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
+for pod in $(kubectl get pods $SCOPE -o jsonpath='{range .items[?(@.status.phase=="Running")]}{.metadata.namespace}/{.metadata.name}{"\n"}{end}' | head -50); do
+  ns=${pod%%/*}; name=${pod##*/}
+  errors=$(kubectl logs -n $ns $name --all-containers --since=$SINCE --timestamps 2>/dev/null | grep -ciE 'error|fatal|panic|exception' || true)
+  [ "$errors" -gt 0 ] 2>/dev/null && echo "$errors errors: $ns/$name"
+done | sort -rn | head -20
+```
+
+This gives a "noisiest pods" ranking even when no pods are in a failed state.
 
 ---
 
@@ -166,6 +224,79 @@ kubectl get jobs $SCOPE -o json | jq -r '.items[] | select((.status.failed // 0)
 ```
 
 For each unhealthy controller, run `kubectl describe <kind> -n <ns> <name>` and check rollout status: `kubectl rollout status <kind>/<name> -n <ns> --timeout=10s`.
+
+---
+
+## Step 6a — Restart timeline and failure chain analysis
+
+Build a timeline of container restarts to distinguish **startup-order noise** (restarts clustered at boot, now stable) from **active instability** (restarts continuing).
+
+```bash
+SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
+
+# Restart timeline: when did each container last terminate?
+kubectl get pods $SCOPE -o json | jq -r '
+  .items[] | select(.status.phase=="Running") |
+  .metadata as $m |
+  .status.containerStatuses[]? |
+  select(.restartCount > 0) |
+  "\(.lastState.terminated.finishedAt // "-") \($m.namespace)/\($m.name) container=\(.name) restarts=\(.restartCount) reason=\(.lastState.terminated.reason // "-") exit=\(.lastState.terminated.exitCode // "-")"
+' | sort
+```
+
+**Interpretation guide:**
+
+- **All restarts clustered at cluster boot time (e.g., within the first 10 minutes)** — likely startup-order dependencies. A pod starts before its dependency is ready, crashes, then succeeds on retry. Low priority.
+- **Restarts continuing in the last 30 minutes** — active instability. High priority.
+- **Restart chains** — if pod A restarts, then pod B restarts shortly after, B likely depends on A. Map the dependency chain:
+  - Database → app → worker is a common pattern (e.g., Redis → cluster-manager → dataplane workers).
+  - Identify the **root pod** (the one that restarted first) and focus debugging there.
+
+```bash
+# Check if any restarts happened recently (last 30 min)
+kubectl get pods $SCOPE -o json | jq -r --arg cutoff "$(date -u -v-30M +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d '30 minutes ago' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null)" '
+  .items[] | .metadata as $m |
+  .status.containerStatuses[]? |
+  select(.restartCount > 0 and (.lastState.terminated.finishedAt // "1970") > $cutoff) |
+  "RECENT-RESTART: \($m.namespace)/\($m.name) container=\(.name) at=\(.lastState.terminated.finishedAt) reason=\(.lastState.terminated.reason)"
+'
+```
+
+---
+
+## Step 6b — HPA and autoscaling health
+
+// turbo
+
+```bash
+SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
+
+# HPA status
+kubectl get hpa $SCOPE -o wide 2>/dev/null
+
+# HPAs unable to scale (metrics issues)
+kubectl get hpa $SCOPE -o json 2>/dev/null | jq -r '
+  .items[] | .metadata.name as $n | .metadata.namespace as $ns |
+  .status.conditions[]? |
+  select(.type=="ScalingActive" and .status!="True") |
+  "\($ns)/\($n): \(.reason) — \(.message)"'
+
+# HPAs at max replicas (may need attention)
+kubectl get hpa $SCOPE -o json 2>/dev/null | jq -r '
+  .items[] |
+  select(.status.currentReplicas >= .spec.maxReplicas) |
+  "\(.metadata.namespace)/\(.metadata.name) at-max=\(.status.currentReplicas)/\(.spec.maxReplicas)"'
+
+# Custom metrics API health (common failure point)
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1 2>&1 | head -5
+kubectl get --raw /apis/metrics.k8s.io/v1beta1 2>&1 | head -5
+```
+
+Flag:
+- HPAs with `ScalingActive=False` — metrics API broken or metric not found.
+- HPAs at max replicas — workload may be under-provisioned.
+- Custom metrics API `ServiceUnavailable` — prometheus-adapter or similar is broken.
+- HPAs with `FailedGetObjectMetric` or `FailedGetResourceMetric` events.
 
 ---
 
@@ -354,15 +485,45 @@ After writing the file, print: report path, verdict, and the top 3 P1 actions.
 
 ## Triage cheat-sheet (apply while interpreting results)
 
+### Pod-level issues
+
 - **Pending pod** → check events (`FailedScheduling`), node taints/affinity, resource requests vs node capacity, PVC binding.
 - **CrashLoopBackOff** → previous logs, exit code (137=OOM, 1=app error, 139=segfault), liveness probe misconfig, missing config/secret.
 - **ImagePullBackOff** → registry auth (`imagePullSecrets`), image name/tag typo, network egress to registry, private registry cert.
 - **CreateContainerConfigError** → missing ConfigMap/Secret keys referenced in env/volumeMounts.
+- **Init:Error / Init:CrashLoopBackOff** → check init container logs explicitly (Step 5b). Common causes: dependency not ready, DB migration failed, config validation failed.
+- **Terminating > 2 min** → finalizers, stuck volumes, node NotReady, `preStop` hook hanging.
+- **Evicted pods** → node DiskPressure/MemoryPressure; check `kubectl describe node` and ephemeral-storage limits.
+
+### Startup-order and dependency chains
+
+- **Multiple pods restart at boot, then stabilize** → startup-order dependency (e.g., app starts before DB is ready). Low priority if restarts stopped.
+- **Cascading CrashLoopBackOff** → identify the root pod (first to crash). Common chains: database → app → workers, DNS → everything, cert-manager → webhooks → all creates.
+- **nginx "host not found in upstream"** → nginx resolved DNS at startup before the backend service existed. Expected to self-heal after a few restarts.
+- **Redis "LOADING" during startup** → Redis loading dataset from disk; scripts that `SET` immediately after `PING` will fail. Wait for `loading:0` in `INFO persistence`.
+
+### Networking and services
+
 - **Service has no endpoints** → selector ↔ pod label mismatch, target pods not Ready, named port mismatch.
 - **DNS failures inside pods** → CoreDNS pods unhealthy, NetworkPolicy blocking egress to kube-dns, node `resolv.conf` issue.
+- **Connection refused to a service** → target pods not ready, wrong port in Service spec, readiness probe failing.
+
+### Storage
+
 - **PVC Pending** → no default StorageClass, provisioner pod down, capacity quota exhausted, AZ mismatch.
+- **PDB disruptionsAllowed=0 blocking drain** → single-replica stateful workloads or storage engine pods (e.g., Longhorn instance-manager).
+
+### Autoscaling
+
+- **HPA `FailedGetObjectMetric`** → custom metrics API broken, prometheus-adapter not serving metrics, metric name mismatch.
+- **HPA at max replicas** → workload may be under-provisioned, or max is set too low.
+- **HPA `TooFewReplicas`** → minReplicas is higher than what the HPA would scale to; expected when load is low.
+
+### Webhooks and API
+
 - **Webhook errors on apply** → mutating/validating webhook service has no endpoints, expired CA bundle, namespace not in `namespaceSelector`.
-- **Evicted pods** → node DiskPressure/MemoryPressure; check `kubectl describe node` and ephemeral-storage limits.
+- **API server slow / timeouts** → check aggregated API services; a broken `custom.metrics.k8s.io` can degrade API server responsiveness.
+- **"the server is currently unable to handle the request"** → aggregated API service is registered but its backing pods are unhealthy.
 
 ---
 
