@@ -46,6 +46,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
 | [ci-debug](./workflows/cicd/ci-debug.md) | `/ci-debug` | Diagnose a failing CI/CD pipeline: parse build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines. Root cause analysis and fix suggestions. | Build log output. Optional: repo source, CI config file. |
+| [jenkins-pipeline-review](./workflows/cicd/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
 | [dockerfile-review](./workflows/containers/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
 
 More on the way — see [Roadmap](#roadmap).
@@ -98,8 +99,9 @@ Ideas I plan to add (PRs welcome):
 
 **Containers & CI/CD**
 - [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
-- [ ] `/github-actions-review` — security review of workflow files
+- [ ] `/github-actions-review` — security review of GitHub Actions workflow files
 - [ ] `/release-checklist` — pre-release gate
+- [ ] `/helm-chart-review` — review Helm chart for missing resources/limits, PDB, anti-affinity, template issues
 
 **Observability & incident**
 - [ ] `/prometheus-query-helper` — intent → PromQL with rationale
