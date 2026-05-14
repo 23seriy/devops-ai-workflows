@@ -51,6 +51,32 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 
 More on the way — see [Roadmap](#roadmap).
 
+## Prompts
+
+Reusable system prompts you can paste into any AI agent for common DevOps tasks:
+
+| Prompt | What it does |
+|---|---|
+| [incident-commander](./prompts/incident-commander.md) | Puts the AI in incident-commander mode: timeline, blast radius, action tracking, status updates. |
+| [postmortem-writer](./prompts/postmortem-writer.md) | Generates a blameless post-mortem from incident notes: timeline, root cause, impact, action items. |
+| [code-review-devops](./prompts/code-review-devops.md) | Reviews IaC / pipeline / Docker / K8s code with a security-first DevOps lens. |
+
+## Rules
+
+Persistent instruction files that shape AI behavior. Copy into a project's `.windsurf/rules/` or use as `.windsurfrules`:
+
+| Rule file | What it does |
+|---|---|
+| [devops-agent.windsurfrules](./rules/devops-agent.windsurfrules) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context. |
+
+## Scripts
+
+Standalone shell utilities referenced by workflows or useful on their own:
+
+| Script | Usage |
+|---|---|
+| [k8s-snapshot.sh](./scripts/k8s-snapshot.sh) | `./k8s-snapshot.sh [namespace\|all] [output-dir]` — dump cluster state (nodes, pods, events, services, top) to a timestamped Markdown file. |
+
 ## Using a workflow
 
 ### In AI agents
