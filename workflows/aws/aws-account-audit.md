@@ -19,9 +19,12 @@ Ask the user for the following before starting (use sensible defaults if not pro
 - **PROFILE** — AWS CLI profile name. Default: current default profile.
 - **REGION** — primary region to audit. Default: current default region (`aws configure get region`).
 - **ALL_REGIONS** — `yes`/`no`. If `yes`, repeat region-scoped checks across all enabled regions. Default: `no` (primary region only).
+- **FAST** — `yes`/`no`. If `yes`, skip slow per-user/per-policy iteration loops and use bulk API calls only. Recommended for large enterprise accounts (>1000 roles or >500 policies) to avoid API throttling. Default: `no`.
 - **REPORT_DIR** — where to write the report. Default: `./aws-account-audit-reports`.
 
 Confirm the inputs and caller identity with the user before proceeding.
+
+> **Performance note:** On large enterprise accounts (thousands of roles/policies), the per-policy admin-access scan in Step 3 can take 30+ minutes due to AWS IAM API throttling. Use `FAST=yes` to skip these loops and rely on `list-entities-for-policy` bulk checks for `AdministratorAccess`, `IAMFullAccess`, and `PowerUserAccess` instead.
 
 ---
 
@@ -85,19 +88,35 @@ Flag:
 
 // turbo
 
+### Always run — bulk privilege checks (fast)
+
 ```bash
-echo "=== Policies with admin access ==="
+echo "=== Account summary (role/policy counts) ==="
+aws iam get-account-summary --output json 2>/dev/null | jq '{Users:.SummaryMap.Users,Roles:.SummaryMap.Roles,Policies:.SummaryMap.Policies,MFADevicesInUse:.SummaryMap.MFADevicesInUse}'
+
+echo "=== Entities with AdministratorAccess ==="
+aws iam list-entities-for-policy --policy-arn "arn:aws:iam::aws:policy/AdministratorAccess" \
+  --query '{Users:PolicyUsers[].UserName,Roles:PolicyRoles[].RoleName|length(@),Groups:PolicyGroups[].GroupName}' --output json 2>/dev/null
+
+echo "=== Entities with IAMFullAccess ==="
+aws iam list-entities-for-policy --policy-arn "arn:aws:iam::aws:policy/IAMFullAccess" \
+  --query '{Users:PolicyUsers[].UserName,Roles:PolicyRoles[].RoleName|length(@),Groups:PolicyGroups[].GroupName}' --output json 2>/dev/null
+
+echo "=== Entities with PowerUserAccess ==="
+aws iam list-entities-for-policy --policy-arn "arn:aws:iam::aws:policy/PowerUserAccess" \
+  --query '{Users:PolicyUsers[].UserName,Roles:PolicyRoles[].RoleName|length(@),Groups:PolicyGroups[].GroupName}' --output json 2>/dev/null
+```
+
+### Only when FAST!=yes — deep per-policy scan (slow on large accounts)
+
+> **Skip this section if `FAST=yes`.** On accounts with thousands of policies, this loop makes one API call per policy and can take 30+ minutes due to IAM throttling.
+
+```bash
+echo "=== Customer-managed policies with admin access ==="
 for arn in $(aws iam list-policies --scope Local --query 'Policies[].Arn' --output text); do
   ver=$(aws iam get-policy --policy-arn "$arn" --query 'Policy.DefaultVersionId' --output text)
   doc=$(aws iam get-policy-version --policy-arn "$arn" --version-id "$ver" --query 'PolicyVersion.Document' --output json 2>/dev/null)
   echo "$doc" | jq -e '.Statement[] | select(.Effect=="Allow" and .Action=="*" and .Resource=="*")' >/dev/null 2>&1 && echo "ADMIN-POLICY: $arn"
-done
-
-echo "=== Users/roles with AdministratorAccess ==="
-for arn in "arn:aws:iam::policy/AdministratorAccess" "arn:aws:iam::policy/IAMFullAccess"; do
-  full_arn="arn:aws:iam::policy/${arn##*/}"
-  managed_arn="arn:aws:iam::aws:policy/${arn##*/}"
-  aws iam list-entities-for-policy --policy-arn "$managed_arn" --query '{Users:PolicyUsers[].UserName,Roles:PolicyRoles[].RoleName,Groups:PolicyGroups[].GroupName}' --output json 2>/dev/null || true
 done
 
 echo "=== Inline policies with wildcards ==="
@@ -111,9 +130,9 @@ done
 
 Flag:
 
-- Customer-managed policies granting `*:*`.
-- Principals with `AdministratorAccess` or `IAMFullAccess`.
-- Inline policies with wildcard actions.
+- Principals with `AdministratorAccess`, `IAMFullAccess`, or `PowerUserAccess`.
+- Customer-managed policies granting `*:*` (deep scan only).
+- Inline policies with wildcard actions (deep scan only).
 - Roles allowing `iam:PassRole` with `*` resource.
 
 ---

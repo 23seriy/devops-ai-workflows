@@ -25,6 +25,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [k8s-cost-hotspots](./workflows/kubernetes/k8s-cost-hotspots.md) | `/k8s-cost-hotspots` | Find waste: over-provisioned workloads, missing requests/limits, idle workloads, orphan PVCs/PVs, idle LoadBalancers. | `kubectl`, `jq`, metrics-server. |
 | [k8s-upgrade-readiness](./workflows/kubernetes/k8s-upgrade-readiness.md) | `/k8s-upgrade-readiness` | Pre-flight before a control-plane / node upgrade: deprecated APIs, version skew, PDB gaps, expiring certs, broken webhooks. | `kubectl`. Optional: `kubent` or `pluto`, `helm`. |
 | [helm-release-debug](./workflows/kubernetes/helm-release-debug.md) | `/helm-release-debug` | Diagnose a stuck or failed Helm release: history, values diff, hook failures, rendered manifest vs cluster, workload health. | `helm` v3, `kubectl`. Optional: `jq`, `yq`. |
+| [helm-chart-review](./workflows/kubernetes/helm-chart-review.md) | `/helm-chart-review` | Review a Helm chart for security, reliability, and best practices: resource specs, probes, security context, PDBs, anti-affinity, RBAC. | Helm chart source. Optional: `helm` CLI. |
 
 ### AWS / Cloud
 
@@ -49,6 +50,18 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [jenkins-pipeline-review](./workflows/cicd/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
 | [dockerfile-review](./workflows/containers/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
 
+### Security
+
+| Workflow | Slash command | Description | Prerequisites |
+|---|---|---|---|
+| [secrets-leak-scan](./workflows/security/secrets-leak-scan.md) | `/secrets-leak-scan` | Scan git repo history for leaked secrets: API keys, passwords, tokens, private keys. Uses gitleaks, trufflehog, or regex fallback. | Git repo. Optional: `gitleaks`, `trufflehog`. |
+
+### Observability & Incident
+
+| Workflow | Slash command | Description | Prerequisites |
+|---|---|---|---|
+| [incident-triage](./workflows/observability/incident-triage.md) | `/incident-triage` | Guided first 15 minutes of a production incident: timeline, blast radius, evidence gathering, mitigation suggestions. | Access to affected environment. |
+
 More on the way — see [Roadmap](#roadmap).
 
 ## Prompts
@@ -60,6 +73,8 @@ Reusable system prompts you can paste into any AI agent for common DevOps tasks:
 | [incident-commander](./prompts/incident-commander.md) | Puts the AI in incident-commander mode: timeline, blast radius, action tracking, status updates. |
 | [postmortem-writer](./prompts/postmortem-writer.md) | Generates a blameless post-mortem from incident notes: timeline, root cause, impact, action items. |
 | [code-review-devops](./prompts/code-review-devops.md) | Reviews IaC / pipeline / Docker / K8s code with a security-first DevOps lens. |
+| [pr-description](./prompts/pr-description.md) | Generates a PR description from a diff: what, why, how, testing, risk, rollback plan. |
+| [explain-like-a-senior](./prompts/explain-like-a-senior.md) | Explains infrastructure code to junior engineers: what it does, why, gotchas, and how it fits together. |
 
 ## Rules
 
@@ -76,6 +91,8 @@ Standalone shell utilities referenced by workflows or useful on their own:
 | Script | Usage |
 |---|---|
 | [k8s-snapshot.sh](./scripts/k8s-snapshot.sh) | `./k8s-snapshot.sh [namespace\|all] [output-dir]` — dump cluster state (nodes, pods, events, services, top) to a timestamped Markdown file. |
+| [aws-whoami.sh](./scripts/aws-whoami.sh) | `./aws-whoami.sh [profile]` — quick AWS identity check: caller, region, account alias, org, SSO role. |
+| [stale-branches.sh](./scripts/stale-branches.sh) | `./stale-branches.sh [days] [--remote]` — list git branches older than N days with last commit info. |
 
 ## Using a workflow
 
@@ -100,7 +117,9 @@ devops-ai-workflows/
 │   ├── aws/                 # AWS / cloud workflow definitions
 │   ├── iac/                 # Infrastructure as Code workflows
 │   ├── cicd/                # CI/CD pipeline workflows
-│   └── containers/          # Container & image workflows
+│   ├── containers/          # Container & image workflows
+│   ├── security/            # Security & repo hygiene workflows
+│   └── observability/       # Observability & incident workflows
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files
 ├── scripts/                 # Standalone shell helpers
@@ -127,12 +146,10 @@ Ideas I plan to add (PRs welcome):
 - [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
 - [ ] `/github-actions-review` — security review of GitHub Actions workflow files
 - [ ] `/release-checklist` — pre-release gate
-- [ ] `/helm-chart-review` — review Helm chart for missing resources/limits, PDB, anti-affinity, template issues
 
 **Observability & incident**
 - [ ] `/prometheus-query-helper` — intent → PromQL with rationale
 - [ ] `/log-pattern-extract` — cluster repeated errors out of a log dump
-- [ ] `/incident-triage` — guided first 15 minutes of an incident
 - [ ] `/postmortem` — blameless post-mortem from a transcript
 - [ ] `/runbook-from-incident` — turn a resolved incident into a reusable runbook
 
@@ -144,7 +161,6 @@ Ideas I plan to add (PRs welcome):
 - [ ] `/db-migration-review` — flag risky migration patterns
 
 **Security & repo hygiene**
-- [ ] `/secrets-leak-scan` — gitleaks/trufflehog over full git history
 - [ ] `/cve-impact-assessment` — given a CVE, check whether your stack is affected
 - [ ] `/repo-health` — README, license, CI, branch protection, stale branches
 - [ ] `/dependency-upgrade-plan` — group outdated deps by risk and suggest batching

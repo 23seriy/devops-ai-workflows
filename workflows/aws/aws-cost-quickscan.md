@@ -19,6 +19,7 @@ Quick, **read-only** scan of an AWS account to surface the biggest cost drivers 
 - **REGION** — primary region. Default: current default.
 - **ALL_REGIONS** — `yes`/`no`. Default: `no`.
 - **LOOKBACK_DAYS** — Cost Explorer lookback period. Default: `30`.
+- **DEEP** — `yes`/`no`. If `yes`, also check per-instance CPU/memory utilization (requires CloudWatch `GetMetricStatistics`, slower on large fleets). Default: `no`.
 - **REPORT_DIR** — Default: `./aws-cost-quickscan-reports`.
 
 ---
@@ -305,7 +306,48 @@ Flag:
 
 ---
 
-## Step 9 — Savings Plans and Reserved Instances coverage
+## Step 9 — EC2 and RDS utilization analysis (only when DEEP=yes)
+
+> **Skip this step if `DEEP!=yes`.** This makes one CloudWatch API call per instance and can be slow on large fleets (50+ instances). The workflow caps at 50 instances.
+
+```bash
+REGIONS="${ALL_REGIONS_LIST:-$REGION}"
+
+for r in $REGIONS; do
+  echo "=== Low-CPU EC2 instances (avg < 5% over 7d) region=$r ==="
+  for iid in $(aws ec2 describe-instances --region "$r" --filters Name=instance-state-name,Values=running --query 'Reservations[].Instances[].InstanceId' --output text 2>/dev/null | head -50); do
+    avg=$(aws cloudwatch get-metric-statistics --region "$r" \
+      --namespace AWS/EC2 --metric-name CPUUtilization \
+      --dimensions Name=InstanceId,Value=$iid \
+      --start-time $(date -u -v-7d +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ) \
+      --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
+      --period 86400 --statistics Average \
+      --query 'Datapoints[].Average' --output text 2>/dev/null | awk '{s+=$1; n++} END {if(n>0) printf "%.1f", s/n; else print "N/A"}')
+    [ "$avg" != "N/A" ] && [ "$(echo "$avg < 5" | bc 2>/dev/null)" = "1" ] && echo "LOW-CPU: $iid avg=${avg}%"
+  done
+
+  echo "=== Low-CPU RDS instances (avg < 10% over 7d) region=$r ==="
+  for dbid in $(aws rds describe-db-instances --region "$r" --query 'DBInstances[?DBInstanceStatus==`available`].DBInstanceIdentifier' --output text 2>/dev/null | head -30); do
+    avg=$(aws cloudwatch get-metric-statistics --region "$r" \
+      --namespace AWS/RDS --metric-name CPUUtilization \
+      --dimensions Name=DBInstanceIdentifier,Value=$dbid \
+      --start-time $(date -u -v-7d +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ) \
+      --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ) \
+      --period 86400 --statistics Average \
+      --query 'Datapoints[].Average' --output text 2>/dev/null | awk '{s+=$1; n++} END {if(n>0) printf "%.1f", s/n; else print "N/A"}')
+    [ "$avg" != "N/A" ] && [ "$(echo "$avg < 10" | bc 2>/dev/null)" = "1" ] && echo "LOW-CPU-RDS: $dbid avg=${avg}%"
+  done
+done
+```
+
+Flag:
+- EC2 instances with avg CPU < 5% — candidates for downsizing or termination.
+- RDS instances with avg CPU < 10% — candidates for smaller instance class.
+- Cross-reference with instance type to estimate savings from right-sizing.
+
+---
+
+## Step 10 — Savings Plans and Reserved Instances coverage
 
 // turbo
 
@@ -334,7 +376,7 @@ Flag:
 
 ---
 
-## Step 10 — Generate report
+## Step 11 — Generate report
 
 Compile all findings into a timestamped Markdown report:
 

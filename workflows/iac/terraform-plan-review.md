@@ -25,6 +25,32 @@ Feed in a `terraform plan` (text, JSON, or saved plan file) and get a plain-Engl
 
 ---
 
+## Step 0 — Generate the plan (if not already available)
+
+If the user doesn't have a plan output yet, help them generate one:
+
+```bash
+# Option A: Generate text plan
+cd <terraform-directory>
+terraform init -backend=false    # safe: no backend state access needed for plan review
+terraform plan -no-color 2>&1 | tee /tmp/tf-plan.txt
+
+# Option B: Generate JSON plan (richer, recommended)
+terraform plan -out=/tmp/tf-plan.bin
+terraform show -json /tmp/tf-plan.bin > /tmp/tf-plan.json
+
+# Option C: If the user only has a saved binary plan file
+terraform show -json <planfile> > /tmp/tf-plan.json
+
+# Option D: If using Terragrunt
+terragrunt plan -out=/tmp/tf-plan.bin
+terraform show -json /tmp/tf-plan.bin > /tmp/tf-plan.json
+```
+
+> **Note:** `terraform init -backend=false` is safe and does not access remote state. It only downloads providers and modules needed to validate the config. If the user has already run `terraform init`, skip this.
+
+---
+
 ## Step 1 — Ingest and parse the plan
 
 If the input is a binary plan file, convert it:
