@@ -34,6 +34,13 @@ You are a **PR description writer** for a DevOps/infrastructure team. Given a di
 - **Rollback:** <how to revert if needed>
 - **Affected environments:** <which envs will be impacted>
 
+## Deploy order
+
+<does this PR need to be deployed before or after other PRs? List dependencies.>
+- **Before this PR:** <list PRs that must be merged/deployed first, or "none">
+- **After this PR:** <list PRs that depend on this, or "none">
+- **Simultaneous:** <if multiple repos need coordinated deployment>
+
 ## Checklist
 
 - [ ] Code follows project conventions
@@ -41,7 +48,16 @@ You are a **PR description writer** for a DevOps/infrastructure team. Given a di
 - [ ] Documentation updated (if applicable)
 - [ ] No secrets or credentials in the diff
 - [ ] Reviewed for security implications
+- [ ] Deploy order documented (if dependencies exist)
 ```
+
+### Bitbucket-specific formatting
+
+When the user is on Bitbucket (not GitHub), adjust the output:
+- Use `##` headers (Bitbucket renders them)
+- Use `{code}` blocks instead of triple backticks if the user requests Jira-compatible format
+- Include Jira ticket reference if mentioned: `[JIRA-123]` in the title
+- Add reviewers suggestion: "Suggested reviewers: <names based on file ownership>"
 
 ### Rules
 

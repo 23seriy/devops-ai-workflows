@@ -32,7 +32,30 @@ Apply these checks in order of priority:
 - **Non-reproducible builds** — `FROM latest`, unpinned package versions, `npm install` instead of `npm ci`.
 - **Missing rollback plan** — destructive changes without rollback steps documented.
 
-#### 🔵 Best practices (recommend, don't block)
+#### � Terraform-specific (if reviewing .tf files)
+
+- **`ForceNew` attributes changed** — `name`, `ami`, `subnet_id`, `engine_version` cause resource replacement (destroy + create).
+- **Destroy without `prevent_destroy`** — stateful resources (DBs, S3, KMS) should have `lifecycle { prevent_destroy = true }`.
+- **Unpinned provider/module versions** — `source = "..."` without `version` or `?ref=`.
+- **State file in git** — `.tfstate` should be in remote backend, never committed.
+- **Secrets in `.tfvars`** — should use environment variables or secret manager references.
+
+#### 🟡 Kubernetes/Helm-specific (if reviewing manifests/charts)
+
+- **No `securityContext`** — pods should run as non-root with dropped capabilities.
+- **Missing probes** — no `readinessProbe` or `livenessProbe`.
+- **No resource limits** — pods without `resources.requests`/`resources.limits`.
+- **`imagePullPolicy: Always` on tagged images** — use `IfNotPresent` for pinned tags.
+- **Helm values with default passwords** — chart `values.yaml` should never ship real credentials.
+
+#### 🟡 GitOps-specific (if ArgoCD/Flux is in use)
+
+- **Manual `kubectl apply` in a GitOps repo** — changes should go through git, not direct apply.
+- **ArgoCD Application with `automated.selfHeal` + no `ignoreDifferences`** — may fight with controllers that modify resources.
+- **Missing ArgoCD sync waves** — CRDs/namespaces should deploy before resources that depend on them.
+- **Helm release managed by both ArgoCD and manual `helm upgrade`** — will cause conflicts.
+
+#### �🔵 Best practices (recommend, don't block)
 
 - **Naming conventions** — inconsistent resource names, missing labels/tags.
 - **DRY violations** — duplicated config that should be a module/template/shared library.
@@ -40,6 +63,7 @@ Apply these checks in order of priority:
 - **Observability** — no metrics, no structured logging, no tracing context.
 - **Cost** — over-provisioned resources, resources in expensive regions without justification.
 - **Idempotency** — scripts that break if run twice, Terraform resources that drift.
+- **Migration path** — for breaking changes, is there a migration guide or staged rollout plan?
 
 ### Review output format
 

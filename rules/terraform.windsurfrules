@@ -1,0 +1,59 @@
+# Terraform Agent Rules
+# Copy to .windsurf/rules/ in any Terraform repo.
+# These rules shape AI behavior for safe Terraform workflows.
+
+## State safety — non-negotiable
+
+- NEVER run `terraform apply` without showing `terraform plan` output first.
+- NEVER run `terraform apply -auto-approve` in any suggestion.
+- NEVER modify `.terraform.lock.hcl` without explaining why.
+- NEVER suggest `terraform state rm` or `terraform state mv` without full explanation of consequences and a backup step (`terraform state pull > backup.tfstate`).
+- NEVER suggest `terraform force-unlock` without verifying no other apply is running.
+- ALWAYS check if backend is configured before running init (`terraform init`).
+- ALWAYS use `-out=plan.bin` when generating plans for later apply: `terraform plan -out=plan.bin` then `terraform apply plan.bin`.
+
+## Resource changes
+
+- When modifying resources, always explain if the change will cause:
+  - **In-place update** (safe, no downtime)
+  - **Replacement** (destroy + create — potential data loss, downtime)
+  - **Destroy** (permanent deletion)
+- Flag `ForceNew` attributes: `name`, `subnet_id`, `vpc_id`, `ami`, `engine_version`, `availability_zone`, `db_subnet_group_name`.
+- For any destroy or replacement, suggest: "Consider adding `lifecycle { prevent_destroy = true }` if this resource should never be accidentally destroyed."
+- When renaming resources, always use `moved { from = ... to = ... }` blocks instead of destroy+create.
+
+## Module and provider hygiene
+
+- Pin provider versions: `required_providers { aws = { version = "~> 5.0" } }` — never leave unpinned.
+- Pin module sources to tags or commits, not branches: `source = "git::https://...?ref=v1.2.3"` not `ref=main`.
+- When adding a new provider or module, run `terraform init -upgrade` and explain what changed in the lock file.
+- Prefer `terraform validate` before `terraform plan` to catch syntax errors early.
+
+## Variable and output conventions
+
+- Every variable should have a `description` and a `type`.
+- Sensitive variables must use `sensitive = true`.
+- Never hardcode values that should be variables (account IDs, region, environment names).
+- Use `locals` for computed values, not repeated expressions in resources.
+- Use `terraform.tfvars` or environment-specific `.tfvars` files, not inline `-var` flags.
+
+## State management
+
+- Before any state operation, take a backup: `terraform state pull > state-backup-$(date +%Y%m%d-%H%M%S).tfstate`.
+- When importing resources: `terraform import` then immediately `terraform plan` to verify the config matches.
+- Flag state files committed to git — they should be in remote backend (S3, GCS, Azure Blob).
+- Flag `.tfvars` files that might contain secrets — should be in `.gitignore`.
+
+## Workspace and environment safety
+
+- ALWAYS confirm which workspace is active: `terraform workspace show`.
+- ALWAYS confirm the backend configuration matches the expected environment.
+- NEVER apply changes targeting production from a development workspace.
+- When working with workspaces, always show: workspace name, backend config, and variable file being used.
+
+## Code style
+
+- Use `terraform fmt` before committing.
+- Prefer `for_each` over `count` for resources that need stable identifiers.
+- Group resources logically: networking, compute, storage, IAM, outputs.
+- Use consistent naming: `snake_case` for resources and variables, descriptive names that include the environment/purpose.
