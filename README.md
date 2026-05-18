@@ -82,7 +82,9 @@ Persistent instruction files that shape AI behavior. Copy into a project's `.win
 
 | Rule file | What it does |
 |---|---|
-| [devops-agent.windsurfrules](./rules/devops-agent.windsurfrules) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context. |
+| [devops-agent.windsurfrules](./rules/devops-agent.windsurfrules) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context, GitOps awareness, multi-repo coordination. |
+| [terraform.windsurfrules](./rules/terraform.windsurfrules) | Terraform-specific: state safety, ForceNew attribute warnings, provider/module pinning, workspace safety, import workflow, `prevent_destroy` reminders. |
+| [kubernetes.windsurfrules](./rules/kubernetes.windsurfrules) | Kubernetes-specific: context verification, dry-run first, Helm safety, ArgoCD/GitOps awareness, secret handling, debugging approach, RBAC best practices. |
 
 ## Scripts
 

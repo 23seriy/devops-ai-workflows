@@ -1,0 +1,67 @@
+# Kubernetes Agent Rules
+# Copy to .windsurf/rules/ in any Kubernetes/Helm/ArgoCD repo.
+# These rules shape AI behavior for safe Kubernetes operations.
+
+## Context safety — non-negotiable
+
+- ALWAYS run `kubectl config current-context` before any kubectl command and confirm it matches the intended cluster.
+- NEVER run `kubectl delete`, `kubectl scale`, `kubectl drain`, `kubectl cordon`, or `kubectl taint` without explicit user confirmation.
+- NEVER suggest `kubectl exec` into production pods unless debugging requires it and the user confirms.
+- NEVER suggest `kubectl port-forward` to production databases without warning about connection limits.
+- ALWAYS prefer `--dry-run=client -o yaml` or `--dry-run=server` before any apply/create/patch.
+- ALWAYS use `-n <namespace>` explicitly — never rely on default namespace for operations.
+- ALWAYS double-check the context is not production when running even read-only commands, if the user's intent is to operate on a non-production cluster.
+
+## Resource changes
+
+- Prefer `kubectl apply -f` (declarative) over `kubectl create` / `kubectl run` (imperative) for anything that should persist.
+- When modifying resources, use `kubectl diff -f <file>` before `kubectl apply -f <file>`.
+- When editing live resources with `kubectl edit`, warn that changes may be overwritten by GitOps controllers (ArgoCD, Flux).
+- When scaling: always show current replicas first (`kubectl get deploy <name> -o jsonpath='{.spec.replicas}'`).
+- When deleting: show what will be deleted first (`kubectl get <resource> -l <selector>`), especially for label-based deletions.
+- For CRDs: explain what the CR controls before suggesting modifications.
+
+## Debugging approach
+
+- Start with read-only commands: `get`, `describe`, `logs`, `events`, `top`.
+- Check events before logs: `kubectl get events -n <ns> --sort-by=.lastTimestamp --field-selector involvedObject.name=<pod>`.
+- Always check both current and previous container logs: `kubectl logs <pod> --previous`.
+- For init container issues, explicitly check init container logs: `kubectl logs <pod> -c <init-container>`.
+- For CrashLoopBackOff: check exit code first (137=OOM, 1=app error, 139=segfault), then logs.
+- For Pending pods: check events for scheduling issues, then node resources, then PVC binding.
+
+## Helm safety
+
+- ALWAYS run `helm diff upgrade` or `helm upgrade --dry-run` before actual upgrade.
+- NEVER run `helm uninstall` without confirmation and understanding of what resources will be deleted.
+- NEVER run `helm rollback` without checking the target revision's values first.
+- When troubleshooting Helm releases, check if ArgoCD manages the release — manual Helm operations may conflict.
+- Pin chart versions in commands: `helm install <name> <chart> --version <x.y.z>`.
+
+## GitOps awareness
+
+- If ArgoCD or Flux is present in the cluster, warn that manual `kubectl apply` changes will likely be reverted by the GitOps controller.
+- Check for ArgoCD Application status: `kubectl get applications -n argocd` before suggesting manual changes.
+- Prefer suggesting changes to the git source (values files, manifests) rather than live cluster edits.
+- For ArgoCD-managed resources, suggest `argocd app sync <app>` over `kubectl apply`.
+
+## Secret handling
+
+- NEVER print secret values: `kubectl get secret <name> -o yaml` exposes base64-encoded data.
+- ONLY show secret metadata: `kubectl get secret <name> -o jsonpath='{.metadata.name} type={.type} keys={.data | keys}'`.
+- When creating secrets, prefer `kubectl create secret` from file/literal over inline YAML with base64.
+- Check for secrets referenced by pods that don't exist: common cause of `CreateContainerConfigError`.
+
+## Namespace and RBAC
+
+- Be aware of namespace-scoped vs cluster-scoped resources. Don't use `-n` with cluster-scoped resources.
+- When RBAC errors occur, diagnose with `kubectl auth can-i <verb> <resource> -n <ns>` before suggesting permission changes.
+- Never suggest adding `cluster-admin` bindings as a fix for RBAC issues — find the minimum required permissions.
+
+## Resource best practices
+
+- Flag pods without resource requests/limits.
+- Flag Deployments without readiness/liveness probes.
+- Flag single-replica Deployments for critical services.
+- Flag PodDisruptionBudgets with `maxUnavailable: 0` (blocks all voluntary disruptions).
+- Flag containers running as root without explicit justification.

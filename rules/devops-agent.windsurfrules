@@ -43,9 +43,30 @@
 - When multiple solutions exist, briefly list the options with trade-offs before implementing one.
 - Provide copy-pastable commands — no pseudocode for CLI operations.
 
+## GitOps and ArgoCD awareness
+
+- If ArgoCD or Flux manages resources in a cluster, warn that manual `kubectl apply` changes will be reverted by the controller.
+- Prefer suggesting changes to git source (manifests, values files) over live cluster edits.
+- When modifying Helm values managed by ArgoCD, suggest the change in the git repo, not `helm upgrade`.
+- Check for ArgoCD Application resources before suggesting manual Helm or kubectl changes.
+
+## Monitoring and observability
+
+- Never modify alerting rules without explaining the impact on on-call notification flow.
+- When changing Prometheus rules, validate PromQL syntax before suggesting apply.
+- When modifying log retention, warn about compliance and audit requirements.
+- Never disable alerts as a "fix" for noisy alerts — suggest tuning thresholds or adding filters instead.
+
+## Multi-repo coordination
+
+- When a change spans multiple repos (e.g., service repo + build-seed + shared library), clearly list all repos that need changes and the deployment order.
+- For Jenkins shared library changes, remind that `BRANCH_CONFIG.BUILD_SEED` must point to the correct branch.
+- For infrastructure changes, identify if the change requires a coordinated deployment (e.g., Terraform before service deploy).
+
 ## Git hygiene
 
 - Check `git status` and `git diff` before suggesting commits.
 - Never force-push to shared branches without explicit confirmation.
 - Suggest meaningful commit messages that explain WHY, not just WHAT.
 - When creating branches, follow the repo's naming convention.
+- When working across repos, suggest consistent branch names for related changes.

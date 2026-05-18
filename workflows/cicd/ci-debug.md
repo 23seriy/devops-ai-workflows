@@ -161,6 +161,32 @@ Check for:
 
 ---
 
+## Step 5b — Bitbucket Pipelines-specific analysis (if CI_SYSTEM=bitbucket)
+
+```
+Check for:
+- Pipeline YAML syntax errors (bitbucket-pipelines.yml)
+- Step script failures (+ prefix lines showing executed commands)
+- Docker-in-Docker issues (Docker daemon not running, DinD service)
+- Cache restoration failures (caches not found, expired, corrupted)
+- Artifact download issues between steps
+- Runner resource limits (memory limit exceeded, 4GB/8GB step limits)
+- Service container startup failures (databases, Redis in services block)
+- Deployment environment restrictions (environment permissions)
+- Pipe failures (atlassian/* pipes, custom pipes, authentication)
+- Branch pattern matching issues (branches not triggering expected pipelines)
+- SSH key issues for git operations or deployments
+- Max build time exceeded (120 minutes default)
+- Repository variables not found or unexpanded
+```
+
+For Bitbucket-specific patterns, also check:
+- `BB_AUTH_TOKEN` / `BITBUCKET_*` variable availability
+- Pipe version pinning (using `x.y.z` vs `latest`)
+- `after-script` block for cleanup on failure
+
+---
+
 ## Step 6 — Pattern detection
 
 Look for recurring patterns across the log:
