@@ -32,6 +32,14 @@ Ask the user for the following:
 ```bash
 aws sts get-caller-identity
 REGION=${REGION:-$(aws configure get region)}
+SRC_PRIVATE_IP=""
+SRC_SUBNET_ID=""
+SRC_VPC_ID=""
+SRC_SECURITY_GROUPS=""
+DEST_IP="$DESTINATION"
+DST_VPC_ID=""
+DST_SUBNET_ID=""
+DST_SECURITY_GROUPS=""
 
 echo "=== Resolve SOURCE ==="
 # If SOURCE looks like an instance ID
@@ -39,6 +47,10 @@ if echo "$SOURCE" | grep -qE '^i-[0-9a-f]+$'; then
   aws ec2 describe-instances --region $REGION --instance-ids $SOURCE \
     --query 'Reservations[0].Instances[0].{InstanceId:InstanceId,PrivateIp:PrivateIpAddress,PublicIp:PublicIpAddress,SubnetId:SubnetId,VpcId:VpcId,SecurityGroups:SecurityGroups[].GroupId,Name:Tags[?Key==`Name`]|[0].Value}' \
     --output json
+  SRC_PRIVATE_IP=$(aws ec2 describe-instances --region $REGION --instance-ids $SOURCE --query 'Reservations[0].Instances[0].PrivateIpAddress' --output text)
+  SRC_SUBNET_ID=$(aws ec2 describe-instances --region $REGION --instance-ids $SOURCE --query 'Reservations[0].Instances[0].SubnetId' --output text)
+  SRC_VPC_ID=$(aws ec2 describe-instances --region $REGION --instance-ids $SOURCE --query 'Reservations[0].Instances[0].VpcId' --output text)
+  SRC_SECURITY_GROUPS=$(aws ec2 describe-instances --region $REGION --instance-ids $SOURCE --query 'Reservations[0].Instances[0].SecurityGroups[].GroupId' --output text)
 fi
 
 # If SOURCE looks like an ENI
@@ -46,6 +58,10 @@ if echo "$SOURCE" | grep -qE '^eni-[0-9a-f]+$'; then
   aws ec2 describe-network-interfaces --region $REGION --network-interface-ids $SOURCE \
     --query 'NetworkInterfaces[0].{Id:NetworkInterfaceId,PrivateIp:PrivateIpAddress,SubnetId:SubnetId,VpcId:VpcId,SecurityGroups:Groups[].GroupId,Description:Description}' \
     --output json
+  SRC_PRIVATE_IP=$(aws ec2 describe-network-interfaces --region $REGION --network-interface-ids $SOURCE --query 'NetworkInterfaces[0].PrivateIpAddress' --output text)
+  SRC_SUBNET_ID=$(aws ec2 describe-network-interfaces --region $REGION --network-interface-ids $SOURCE --query 'NetworkInterfaces[0].SubnetId' --output text)
+  SRC_VPC_ID=$(aws ec2 describe-network-interfaces --region $REGION --network-interface-ids $SOURCE --query 'NetworkInterfaces[0].VpcId' --output text)
+  SRC_SECURITY_GROUPS=$(aws ec2 describe-network-interfaces --region $REGION --network-interface-ids $SOURCE --query 'NetworkInterfaces[0].Groups[].GroupId' --output text)
 fi
 
 echo "=== Resolve DESTINATION ==="
@@ -53,6 +69,7 @@ echo "=== Resolve DESTINATION ==="
 if echo "$DESTINATION" | grep -qE '[a-zA-Z]'; then
   echo "DNS resolution:"
   dig +short "$DESTINATION" 2>/dev/null || nslookup "$DESTINATION" 2>/dev/null || echo "Could not resolve"
+  DEST_IP=$(dig +short "$DESTINATION" 2>/dev/null | grep -E '^[0-9]+\.' | head -1 || echo "$DESTINATION")
 fi
 
 # If DESTINATION looks like an RDS endpoint
@@ -62,6 +79,18 @@ if echo "$DESTINATION" | grep -qE '\.rds\.amazonaws\.com$'; then
     --query 'DBInstances[0].{Id:DBInstanceIdentifier,Endpoint:Endpoint,VpcSecurityGroups:VpcSecurityGroups[].VpcSecurityGroupId,SubnetGroup:DBSubnetGroup.DBSubnetGroupName}' \
     --output json 2>/dev/null || true
 fi
+
+echo "=== Resolved variables for later steps ==="
+cat <<EOF
+SRC_PRIVATE_IP=$SRC_PRIVATE_IP
+SRC_SUBNET_ID=$SRC_SUBNET_ID
+SRC_VPC_ID=$SRC_VPC_ID
+SRC_SECURITY_GROUPS=$SRC_SECURITY_GROUPS
+DEST_IP=$DEST_IP
+DST_VPC_ID=$DST_VPC_ID
+DST_SUBNET_ID=$DST_SUBNET_ID
+DST_SECURITY_GROUPS=$DST_SECURITY_GROUPS
+EOF
 ```
 
 Stop if the source cannot be resolved — report the error and suggest checking the instance/ENI ID.
@@ -90,6 +119,9 @@ if echo "$DEST_IP" | grep -qE '^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)';
     --filters Name=addresses.private-ip-address,Values=$DEST_IP \
     --query 'NetworkInterfaces[0].{VpcId:VpcId,SubnetId:SubnetId,SecurityGroups:Groups[].GroupId,Description:Description}' \
     --output json 2>/dev/null || echo "Destination IP not found as ENI address"
+  DST_VPC_ID=$(aws ec2 describe-network-interfaces --region $REGION --filters Name=addresses.private-ip-address,Values=$DEST_IP --query 'NetworkInterfaces[0].VpcId' --output text 2>/dev/null || true)
+  DST_SUBNET_ID=$(aws ec2 describe-network-interfaces --region $REGION --filters Name=addresses.private-ip-address,Values=$DEST_IP --query 'NetworkInterfaces[0].SubnetId' --output text 2>/dev/null || true)
+  DST_SECURITY_GROUPS=$(aws ec2 describe-network-interfaces --region $REGION --filters Name=addresses.private-ip-address,Values=$DEST_IP --query 'NetworkInterfaces[0].Groups[].GroupId' --output text 2>/dev/null || true)
 fi
 
 echo "=== VPC peering connections ==="
@@ -108,6 +140,7 @@ Flag:
 
 - Source and destination in different VPCs without peering/TGW.
 - Public vs private subnet classification.
+- Missing resolved variables (`SRC_VPC_ID`, `SRC_SUBNET_ID`, `DEST_IP`) — later checks depend on them.
 
 ---
 
@@ -268,6 +301,36 @@ Flag:
 - `enableDnsSupport` or `enableDnsHostnames` disabled.
 - Destination hostname not resolvable.
 - Missing private hosted zone association for cross-VPC DNS.
+- Split-horizon mismatch: local laptop resolves a different IP than the source VPC would resolve.
+- Resolver endpoint exists but has unhealthy status or insufficient IP addresses.
+
+---
+
+## Step 7b — Optional Reachability Analyzer path check
+
+> Use this only if the source and destination are ENIs or instances and the account has EC2 Reachability Analyzer permissions. It creates no traffic; it analyzes control-plane configuration.
+
+```bash
+echo "=== Reachability Analyzer guidance ==="
+cat <<EOF
+If SOURCE and DESTINATION can be represented as ENIs, optionally run:
+  aws ec2 create-network-insights-path \\
+    --region $REGION \\
+    --source <source-eni-id> \\
+    --destination <destination-eni-id> \\
+    --protocol ${PROTOCOL^^} \\
+    --destination-port $PORT
+
+Then:
+  aws ec2 start-network-insights-analysis --network-insights-path-id <path-id>
+  aws ec2 describe-network-insights-analyses --network-insights-analysis-ids <analysis-id>
+
+Clean up:
+  aws ec2 delete-network-insights-path --network-insights-path-id <path-id>
+EOF
+```
+
+Flag: Reachability Analyzer finding the exact blocker (route table, SG, NACL, endpoint policy) should override heuristic guesses from earlier steps.
 
 ---
 

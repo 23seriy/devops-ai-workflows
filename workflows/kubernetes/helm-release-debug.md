@@ -71,6 +71,25 @@ Flag: changes in image tags, replica counts, resources, securityContext, ingress
 
 ---
 
+## Step 3b — GitOps ownership check
+
+// turbo
+
+```bash
+echo "=== Helm release labels/secrets ==="
+kubectl -n $NAMESPACE get secret -l "owner=helm,name=$RELEASE" -o custom-columns=NAME:.metadata.name,STATUS:.metadata.labels.status,VERSION:.metadata.labels.version,CREATED:.metadata.creationTimestamp 2>/dev/null
+
+echo "=== ArgoCD Applications that may manage this release ==="
+kubectl get applications -A 2>/dev/null | grep -E "$RELEASE|$NAMESPACE" || echo "No matching ArgoCD Application found (or CRD not installed/no permission)"
+
+echo "=== Flux HelmReleases that may manage this release ==="
+kubectl get helmreleases -A 2>/dev/null | grep -E "$RELEASE|$NAMESPACE" || echo "No matching Flux HelmRelease found (or CRD not installed/no permission)"
+```
+
+Flag: release managed by ArgoCD/Flux where manual `helm rollback` or `helm upgrade` will conflict with the GitOps controller. Prefer changing the Git source and syncing the application.
+
+---
+
 ## Step 4 — Rendered manifest sanity
 
 // turbo
@@ -84,6 +103,27 @@ grep -E '^kind: ' /tmp/manifest.yaml | sort | uniq -c | sort -rn
 ```
 
 Flag: deprecated apiVersions (compare against current cluster version — see `/k8s-upgrade-readiness`); kinds the cluster doesn't support (CRD missing).
+
+---
+
+## Step 4b — CRD dependency and lifecycle checks
+
+// turbo
+
+```bash
+echo "=== CRDs referenced by rendered manifests ==="
+grep -E '^kind: ' /tmp/manifest.yaml | awk '{print $2}' | sort -u | while read kind; do
+  kubectl api-resources 2>/dev/null | awk '{print $1,$2,$NF}' | grep -i "^$kind\\b" || true
+done
+
+echo "=== CRDs included in this release manifest ==="
+awk '/^kind: CustomResourceDefinition/{print "CRD found"} /^  name:/{if(found!=""){print $2; found=""}} /^kind: CustomResourceDefinition/{found=1}' /tmp/manifest.yaml
+
+echo "=== Recently established/non-established CRDs ==="
+kubectl get crd -o custom-columns=NAME:.metadata.name,ESTABLISHED:.status.conditions[?(@.type==\"Established\")].status,AGE:.metadata.creationTimestamp 2>/dev/null | tail -50
+```
+
+Flag: custom resources rendered before their CRDs exist, CRDs managed by a different chart/release, CRD upgrades that Helm will not apply automatically, or non-established CRDs blocking dependent resources.
 
 ---
 
@@ -105,6 +145,8 @@ done
 ```
 
 Flag: `pre-upgrade` / `pre-install` jobs failing (these block the whole release); `post-delete` hooks left running on a previous uninstall.
+
+Also flag: hook Jobs with no `activeDeadlineSeconds`, no `ttlSecondsAfterFinished`, very high `backoffLimit`, or hooks missing `helm.sh/hook-delete-policy` (these often leave stale failed Jobs that block later upgrades).
 
 ---
 

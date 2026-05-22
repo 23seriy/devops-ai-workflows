@@ -141,6 +141,30 @@ Flag: workloads still on `default` SA (best practice: dedicated SA per app); `au
 
 ---
 
+## Step 6b — ServiceAccount token exposure and secret references
+
+// turbo
+
+```bash
+[ "$NAMESPACE" = "all" ] && S="-A" || S="-n $NAMESPACE"
+
+echo "=== ServiceAccounts with automount enabled or unspecified ==="
+kubectl get serviceaccounts $S -o json | jq -r '
+  .items[] |
+  select(.automountServiceAccountToken == true or .automountServiceAccountToken == null) |
+  "\(.metadata.namespace)/\(.metadata.name)\tautomount=\(.automountServiceAccountToken // "default-true")"'
+
+echo "=== Pods mounting projected service account tokens ==="
+kubectl get pods $S -o json | jq -r '
+  .items[] |
+  select([.spec.volumes[]? | select(.projected.sources[]?.serviceAccountToken)] | length > 0) |
+  "\(.metadata.namespace)/\(.metadata.name)\tSA=\(.spec.serviceAccountName // "default")"'
+```
+
+Flag: ServiceAccounts that do not need Kubernetes API access but still automount tokens; pods using long-lived or broadly scoped projected tokens; high-privilege ServiceAccounts used by many workloads.
+
+---
+
 ## Step 7 — Aggregated ClusterRoles & built-in escalation paths
 
 // turbo

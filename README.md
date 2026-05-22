@@ -48,6 +48,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 |---|---|---|---|
 | [ci-debug](./workflows/cicd/ci-debug.md) | `/ci-debug` | Diagnose a failing CI/CD pipeline: parse build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines. Root cause analysis and fix suggestions. | Build log output. Optional: repo source, CI config file. |
 | [jenkins-pipeline-review](./workflows/cicd/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
+| [release-checklist](./workflows/cicd/release-checklist.md) | `/release-checklist` | Pre-release safety gate: scope, deploy order, rollback, tests, monitoring, and communication before production release. | PR/diff summary. Optional: test results, plans, diffs. |
 | [dockerfile-review](./workflows/containers/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
 
 ### Security
@@ -55,6 +56,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
 | [secrets-leak-scan](./workflows/security/secrets-leak-scan.md) | `/secrets-leak-scan` | Scan git repo history for leaked secrets: API keys, passwords, tokens, private keys. Uses gitleaks, trufflehog, or regex fallback. | Git repo. Optional: `gitleaks`, `trufflehog`. |
+| [repo-health](./workflows/security/repo-health.md) | `/repo-health` | Audit repository hygiene: README, license, CI, branch/release hygiene, tracked secrets, ownership, and automation gaps. | Local git repo. Optional: `gh`, `jq`. |
 
 ### Observability & Incident
 
@@ -75,6 +77,7 @@ Reusable system prompts you can paste into any AI agent for common DevOps tasks:
 | [code-review-devops](./prompts/code-review-devops.md) | Reviews IaC / pipeline / Docker / K8s code with a security-first DevOps lens. |
 | [pr-description](./prompts/pr-description.md) | Generates a PR description from a diff: what, why, how, testing, risk, rollback plan. |
 | [explain-like-a-senior](./prompts/explain-like-a-senior.md) | Explains infrastructure code to junior engineers: what it does, why, gotchas, and how it fits together. |
+| [runbook-from-incident](./prompts/runbook-from-incident.md) | Converts incident notes or post-mortems into reusable runbooks with diagnosis, mitigation, escalation, and follow-up steps. |
 
 ## Rules
 
@@ -95,6 +98,7 @@ Standalone shell utilities referenced by workflows or useful on their own:
 | [k8s-snapshot.sh](./scripts/k8s-snapshot.sh) | `./k8s-snapshot.sh [namespace\|all] [output-dir]` — dump cluster state (nodes, pods, events, services, top) to a timestamped Markdown file. |
 | [aws-whoami.sh](./scripts/aws-whoami.sh) | `./aws-whoami.sh [profile]` — quick AWS identity check: caller, region, account alias, org, SSO role. |
 | [stale-branches.sh](./scripts/stale-branches.sh) | `./stale-branches.sh [days] [--remote]` — list git branches older than N days with last commit info. |
+| [validate-repo.sh](./scripts/validate-repo.sh) | `./scripts/validate-repo.sh` — validate workflow frontmatter, README links, script executability, and optional lint checks. |
 
 ## Using a workflow
 
@@ -147,7 +151,6 @@ Ideas I plan to add (PRs welcome):
 **Containers & CI/CD**
 - [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
 - [ ] `/github-actions-review` — security review of GitHub Actions workflow files
-- [ ] `/release-checklist` — pre-release gate
 
 **Observability & incident**
 - [ ] `/prometheus-query-helper` — intent → PromQL with rationale

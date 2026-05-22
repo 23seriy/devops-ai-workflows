@@ -8,14 +8,18 @@ All notable changes to this project will be documented in this file.
 - **`/helm-chart-review`** — review Helm charts for security, reliability, and best practices (kubernetes/)
 - **`/secrets-leak-scan`** — scan git repos for leaked secrets using gitleaks, trufflehog, or regex (security/)
 - **`/incident-triage`** — guided first 15 minutes of a production incident (observability/)
+- **`/release-checklist`** — pre-release safety gate covering scope, deploy order, rollback, tests, monitoring, and communication (cicd/)
+- **`/repo-health`** — repository hygiene audit for docs, CI, ownership, branch/release hygiene, and secrets risk (security/)
 
 ### Added — Prompts
 - **`pr-description.md`** — generate PR descriptions from diffs
 - **`explain-like-a-senior.md`** — explain infrastructure code to junior engineers
+- **`runbook-from-incident.md`** — turn incident notes or post-mortems into reusable runbooks
 
 ### Added — Scripts
 - **`aws-whoami.sh`** — quick AWS identity and account context check
 - **`stale-branches.sh`** — list git branches older than N days
+- **`validate-repo.sh`** — local validation for workflow frontmatter, README links, executable scripts, and optional lint checks
 
 ### Added — CI
 - GitHub Actions CI: markdown lint, link check, frontmatter validation, README link verification
@@ -25,6 +29,12 @@ All notable changes to this project will be documented in this file.
 - **`/aws-cost-quickscan`** — added `DEEP=yes` input for per-instance CPU utilization analysis
 - **`/terraform-plan-review`** — added Step 0 with plan generation commands (including Terragrunt)
 - **`/k8s-debug`** — enhanced log analysis (Step 5) with init container logs, structured error extraction, severity classification, and "noisiest pods" scan; added restart timeline analysis (Step 6a) and HPA health check (Step 6b); expanded triage cheat-sheet with startup-order, Redis, autoscaling, and webhook patterns
+- **`/k8s-workload-debug`** — added init/sidecar analysis and GitOps/controller ownership checks
+- **`/k8s-rbac-audit`** — added ServiceAccount token exposure checks
+- **`/helm-release-debug`** — added ArgoCD/Flux ownership checks before suggesting manual Helm recovery
+- **`/aws-vpc-debug`** — clarified source/destination variable resolution for VPC, subnet, security groups, and destination IP
+- **`postmortem-writer.md`** — added SLO/data impact, recurrence risk, and action item type classification
+- **`explain-like-a-senior.md`** — added prerequisite knowledge, safe validation, and team-question sections
 
 ---
 
