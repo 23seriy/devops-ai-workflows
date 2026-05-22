@@ -76,6 +76,7 @@ kubectl -n $NAMESPACE get $KIND $NAME -o json | jq '{
   tolerations: .spec.template.spec.tolerations,
   affinity: .spec.template.spec.affinity,
   topologySpread: .spec.template.spec.topologySpreadConstraints,
+  automountServiceAccountToken: .spec.template.spec.automountServiceAccountToken,
   containers: [.spec.template.spec.containers[] | {
     name, image,
     resources,
@@ -89,7 +90,7 @@ kubectl -n $NAMESPACE get $KIND $NAME -o json | jq '{
 }'
 ```
 
-Flag: missing requests/limits, no probes, no readinessProbe (rolling updates lie about readiness), `latest` tag, runs as root, missing `imagePullSecrets` for private registry, oversized resources vs cluster.
+Flag: missing requests/limits, no probes, no readinessProbe (rolling updates lie about readiness), `latest` tag, runs as root, missing `imagePullSecrets` for private registry, oversized resources vs cluster, `automountServiceAccountToken: true` on workloads that do not call the Kubernetes API.
 
 ---
 
@@ -132,6 +133,26 @@ done
 ```
 
 Search for: `error`, `fatal`, `panic`, `exception`, `traceback`, `failed`, `timeout`, `refused`, `denied`, `unauthorized`, `OOM`, `evicted`, `connection reset`, `dial tcp`, `no such host`, `permission denied`, `bind: address already in use`. Group identical messages; report count + first/last timestamp + sample line.
+
+---
+
+## Step 5b — Sidecar and init-container analysis
+
+```bash
+kubectl -n $NAMESPACE get pods -l "$SEL" -o json | jq -r '
+  .items[] | .metadata.name as $p |
+  "POD=\($p)",
+  "  initContainers=\([.spec.initContainers[]?.name] | join(","))",
+  "  containers=\([.spec.containers[]?.name] | join(","))"'
+
+for p in $(kubectl -n $NAMESPACE get pods -l "$SEL" -o name); do
+  kubectl -n $NAMESPACE get $p -o json | jq -r '.spec.initContainers[]?.name' | while read c; do
+    [ -n "$c" ] && echo "===== $p init/$c =====" && kubectl -n $NAMESPACE logs $p -c "$c" --tail=$LOG_TAIL --timestamps 2>/dev/null
+  done
+done
+```
+
+Flag: init container failures hidden behind `Init:Error` / `PodInitializing`; sidecars such as Istio/Envoy, Vault agent, Fluent Bit, or OpenTelemetry collector restarting while the app container looks healthy; sidecar injection changing ports, env vars, or filesystem mounts.
 
 ---
 
@@ -187,6 +208,23 @@ kubectl -n $NAMESPACE get networkpolicy 2>/dev/null
 ```
 
 Flag: service with no endpoints, named-port mismatch, NetworkPolicy denying expected traffic, Ingress without IP/host.
+
+---
+
+## Step 8b — GitOps and controller ownership
+
+```bash
+echo "=== GitOps/controller ownership labels ==="
+kubectl -n $NAMESPACE get $KIND $NAME -o json | jq '.metadata.labels, .metadata.annotations'
+
+echo "=== ArgoCD Applications referencing namespace/workload (if installed) ==="
+kubectl get applications -A 2>/dev/null | grep -E "$NAMESPACE|$NAME" || echo "No matching ArgoCD Application found (or CRD not installed/no permission)"
+
+echo "=== Flux Kustomizations/HelmReleases (if installed) ==="
+kubectl get kustomizations,helmreleases -A 2>/dev/null | grep -E "$NAMESPACE|$NAME" || echo "No matching Flux resources found (or CRDs not installed/no permission)"
+```
+
+Flag: resource managed by ArgoCD/Flux/Helm where manual `kubectl edit/apply` changes will be reverted; sync status unhealthy/out-of-sync; multiple controllers owning the same workload.
 
 ---
 

@@ -33,7 +33,9 @@ Generate the post-mortem in this structure:
 - **Services affected:** <list>
 - **Duration of impact:** <how long users experienced degradation>
 - **SLA impact:** <was an SLA breached?>
+- **SLO impact:** <which SLO/error budget was consumed?>
 - **Revenue impact:** <if applicable>
+- **Data impact:** <data loss, corruption, delay, or "none">
 
 ## Timeline (UTC)
 
@@ -65,6 +67,13 @@ Generate the post-mortem in this structure:
 - **What was the mitigation?** <rollback / config change / scale up / etc.>
 - **Was the runbook followed?** <yes / no / no runbook existed>
 
+## Recurrence risk
+
+- **Likelihood of recurrence:** Low / Medium / High
+- **Why:** <what conditions would cause this again?>
+- **Existing guardrails:** <tests, alerts, automation, runbooks>
+- **Missing guardrails:** <what would have prevented or shortened the incident?>
+
 ## Contributing factors
 
 <List all factors that contributed. Not just the trigger, but also:>
@@ -91,10 +100,10 @@ Generate the post-mortem in this structure:
 
 ## Action items
 
-| # | Action | Owner | Priority | Due date | Status |
-|---|---|---|---|---|---|
-| 1 | <specific action> | <name> | P1/P2/P3 | <date> | Open |
-| 2 | ... | ... | ... | ... | ... |
+| # | Action | Owner | Priority | Due date | Type | Status |
+|---|---|---|---|---|---|---|
+| 1 | <specific action> | <name> | P1/P2/P3 | <date> | Prevent / Detect / Mitigate | Open |
+| 2 | ... | ... | ... | ... | ... | ... |
 
 ## Lessons learned
 
@@ -108,4 +117,5 @@ Generate the post-mortem in this structure:
 - **Honest.** If the root cause is unknown, say so. "Root cause is not fully determined; the leading hypothesis is X" is better than guessing.
 - **Action-oriented.** Every "what could be improved" must have a corresponding action item with an owner.
 - **Time-bounded.** Action items need due dates. "Eventually" means "never."
+- **Prevention-balanced.** Include at least one action item for detection/alerting and one for prevention when applicable.
 - **Ask for missing information.** If the user's notes don't cover detection, response, or contributing factors, ask specifically.
