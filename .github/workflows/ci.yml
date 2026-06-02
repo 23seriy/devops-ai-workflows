@@ -31,26 +31,26 @@ jobs:
         run: |
           echo "Checking all workflows have frontmatter..."
           errors=0
-          for f in workflows/**/*.md; do
+          while IFS= read -r f; do
             if ! head -1 "$f" | grep -q '^---$'; then
               echo "❌ Missing frontmatter: $f"
               errors=$((errors + 1))
             fi
-          done
-          echo "Checked $(find workflows -name '*.md' | wc -l) workflows, $errors missing frontmatter"
+          done < <(find .claude/commands -name '*.md')
+          echo "Checked $(find .claude/commands -name '*.md' | wc -l) workflows, $errors missing frontmatter"
           [ "$errors" -eq 0 ] && echo "✅ All workflows have frontmatter"
 
       - name: Check README workflow table matches files
         run: |
           echo "Checking README links match actual files..."
           errors=0
-          for f in $(grep -oE '\./workflows/[^)]+\.md' README.md); do
+          for f in $(grep -oE '\./\.claude/commands/[^)]+\.md' README.md); do
             if [ ! -f "$f" ]; then
               echo "❌ README links to $f but file doesn't exist"
               errors=$((errors + 1))
             fi
           done
-          echo "Checked $(grep -coE '\./workflows/[^)]+\.md' README.md) README links, $errors broken"
+          echo "Checked $(grep -coE '\./\.claude/commands/[^)]+\.md' README.md) README links, $errors broken"
           [ "$errors" -eq 0 ] && echo "✅ All README links are valid"
 
       - name: Check scripts are executable
