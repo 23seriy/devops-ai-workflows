@@ -23,8 +23,6 @@ For when `helm upgrade` is stuck `pending-upgrade`, a release is `failed`, hooks
 
 ## Step 1 — Release status & history
 
-// turbo
-
 ```bash
 helm -n $NAMESPACE status $RELEASE
 helm -n $NAMESPACE history $RELEASE --max=20
@@ -73,8 +71,6 @@ Flag: changes in image tags, replica counts, resources, securityContext, ingress
 
 ## Step 3b — GitOps ownership check
 
-// turbo
-
 ```bash
 echo "=== Helm release labels/secrets ==="
 kubectl -n $NAMESPACE get secret -l "owner=helm,name=$RELEASE" -o custom-columns=NAME:.metadata.name,STATUS:.metadata.labels.status,VERSION:.metadata.labels.version,CREATED:.metadata.creationTimestamp 2>/dev/null
@@ -92,8 +88,6 @@ Flag: release managed by ArgoCD/Flux where manual `helm rollback` or `helm upgra
 
 ## Step 4 — Rendered manifest sanity
 
-// turbo
-
 ```bash
 helm -n $NAMESPACE get manifest $RELEASE > /tmp/manifest.yaml
 grep -E '^(apiVersion|kind|metadata|  name|  namespace):' /tmp/manifest.yaml | head -200
@@ -107,8 +101,6 @@ Flag: deprecated apiVersions (compare against current cluster version — see `/
 ---
 
 ## Step 4b — CRD dependency and lifecycle checks
-
-// turbo
 
 ```bash
 echo "=== CRDs referenced by rendered manifests ==="
@@ -198,8 +190,6 @@ Flag: `FailedCreate` from hook jobs, `BackOff`/`Failed` on release pods, webhook
 
 ## Step 9 — Chart vs cluster compatibility
 
-// turbo
-
 ```bash
 chart=$(helm -n $NAMESPACE get metadata $RELEASE -o json 2>/dev/null | jq -r '.chart')
 appver=$(helm -n $NAMESPACE get metadata $RELEASE -o json 2>/dev/null | jq -r '.appVersion')
@@ -212,8 +202,6 @@ Look up the chart's `Chart.yaml` `kubeVersion` constraint if you have the chart 
 ---
 
 ## Step 10 — Release secret integrity
-
-// turbo
 
 ```bash
 kubectl -n $NAMESPACE get secrets -l owner=helm,name=$RELEASE -o custom-columns=NAME:.metadata.name,STATUS:.metadata.labels.status,REVISION:.metadata.labels.version,AGE:.metadata.creationTimestamp

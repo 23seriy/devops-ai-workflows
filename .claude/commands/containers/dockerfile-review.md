@@ -26,8 +26,6 @@ Analyse a Dockerfile (or set of Dockerfiles) for security vulnerabilities, image
 
 ## Step 1 — Discover and read Dockerfiles
 
-// turbo
-
 ```bash
 # Find all Dockerfiles
 find ${CONTEXT_DIR:-.} -name 'Dockerfile*' -not -path '*/node_modules/*' -not -path '*/.git/*' | head -20

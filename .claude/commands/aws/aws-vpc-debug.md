@@ -27,8 +27,6 @@ Ask the user for the following:
 
 ## Step 1 — Verify identity and resolve source/destination
 
-// turbo
-
 ```bash
 aws sts get-caller-identity
 REGION=${REGION:-$(aws configure get region)}
@@ -99,8 +97,6 @@ Stop if the source cannot be resolved — report the error and suggest checking 
 
 ## Step 2 — VPC and subnet topology
 
-// turbo
-
 ```bash
 echo "=== Source VPC ==="
 aws ec2 describe-vpcs --region $REGION --vpc-ids $SRC_VPC_ID \
@@ -146,8 +142,6 @@ Flag:
 
 ## Step 3 — Route tables
 
-// turbo
-
 ```bash
 echo "=== Source subnet route table ==="
 RT_ID=$(aws ec2 describe-route-tables --region $REGION \
@@ -178,8 +172,6 @@ Flag:
 
 ## Step 4 — Security groups
 
-// turbo
-
 ```bash
 echo "=== Source security group outbound rules ==="
 for sg in $SRC_SECURITY_GROUPS; do
@@ -207,8 +199,6 @@ Flag:
 ---
 
 ## Step 5 — Network ACLs
-
-// turbo
 
 ```bash
 echo "=== Source subnet NACL ==="
@@ -241,8 +231,6 @@ Flag:
 
 ## Step 6 — NAT Gateway, Internet Gateway, VPC Endpoints
 
-// turbo
-
 ```bash
 echo "=== Internet Gateway ==="
 aws ec2 describe-internet-gateways --region $REGION \
@@ -273,8 +261,6 @@ Flag:
 ---
 
 ## Step 7 — DNS resolution
-
-// turbo
 
 ```bash
 echo "=== VPC DNS settings ==="

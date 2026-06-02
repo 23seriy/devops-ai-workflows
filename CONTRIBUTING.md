@@ -23,7 +23,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
    - **VAR_NAME** — meaning. Default: ...
 
    ## Step 1 — ...
-   // turbo
+
    ```bash
    safe read-only command
    ```
@@ -42,7 +42,6 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
 - **No secrets in output.** Never print secret values, tokens, private keys, or passwords. Names and metadata only.
 - **Idempotent and safe to re-run.** Running the workflow twice should not change cluster state.
 - **No assumptions about the environment.** State the prerequisites; degrade gracefully when optional tools (`jq`, `metrics-server`, etc.) are missing.
-- **Use `// turbo` only on truly safe commands.** When in doubt, omit it so the user approves.
 - **Produce a report.** Workflows should end by writing a timestamped Markdown report so users have an artefact to share.
 
 ## PR checklist

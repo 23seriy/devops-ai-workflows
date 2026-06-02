@@ -25,8 +25,6 @@ Static analysis of a Helm chart **before deployment**. Checks templates, `values
 
 ## Step 1 — Chart structure and metadata
 
-// turbo
-
 ```bash
 # Validate chart structure
 ls -la $CHART_PATH/

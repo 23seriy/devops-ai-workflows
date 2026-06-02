@@ -1,6 +1,6 @@
 # Kubernetes Agent Rules
-# Copy to .windsurf/rules/ in any Kubernetes/Helm/ArgoCD repo.
-# These rules shape AI behavior for safe Kubernetes operations.
+
+Agent-agnostic safety guardrails for Kubernetes / Helm / ArgoCD work. Reference from a project's `CLAUDE.md`, paste into a system prompt, or include as context when working on cluster code.
 
 ## Context safety — non-negotiable
 

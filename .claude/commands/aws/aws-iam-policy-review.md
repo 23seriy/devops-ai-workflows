@@ -29,8 +29,6 @@ Optional:
 
 ## Step 1 — Resolve and fetch the policy document(s)
 
-// turbo
-
 ```bash
 aws sts get-caller-identity
 
@@ -162,8 +160,6 @@ Effect: Allow, NotResource: [<small list>]      → allows all other resources
 
 ## Step 3 — Trust policy analysis (roles only)
 
-// turbo
-
 ```bash
 if [ -n "$PRINCIPAL_ARN" ] && echo "$PRINCIPAL_ARN" | grep -q ':role/'; then
   ROLE_NAME=$(echo "$PRINCIPAL_ARN" | awk -F/ '{print $NF}')
@@ -188,8 +184,6 @@ Flag:
 ---
 
 ## Step 4 — IAM Access Analyzer findings (if available)
-
-// turbo
 
 ```bash
 echo "=== IAM Access Analyzer analyzers ==="

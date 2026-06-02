@@ -22,8 +22,6 @@ Read-only repository audit for maintainability, security hygiene, and operationa
 
 ## Step 1 — Basic repository inventory
 
-// turbo
-
 ```bash
 cd $REPO_PATH
 
@@ -46,8 +44,6 @@ Flag:
 
 ## Step 2 — Documentation and ownership
 
-// turbo
-
 ```bash
 cd $REPO_PATH
 
@@ -67,8 +63,6 @@ Flag:
 ---
 
 ## Step 3 — CI/CD and automation
-
-// turbo
 
 ```bash
 cd $REPO_PATH
@@ -90,8 +84,6 @@ Flag:
 
 ## Step 4 — Secrets and ignore hygiene
 
-// turbo
-
 ```bash
 cd $REPO_PATH
 
@@ -112,8 +104,6 @@ If suspicious findings appear, recommend `/secrets-leak-scan` for full history s
 ---
 
 ## Step 5 — Branch and release hygiene
-
-// turbo
 
 ```bash
 cd $REPO_PATH

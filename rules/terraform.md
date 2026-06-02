@@ -1,6 +1,6 @@
 # Terraform Agent Rules
-# Copy to .windsurf/rules/ in any Terraform repo.
-# These rules shape AI behavior for safe Terraform workflows.
+
+Agent-agnostic safety guardrails for Terraform work. Reference from a project's `CLAUDE.md`, paste into a system prompt, or include as context when working in a Terraform repo.
 
 ## State safety — non-negotiable
 

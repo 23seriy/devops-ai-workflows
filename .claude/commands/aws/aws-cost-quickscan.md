@@ -26,8 +26,6 @@ Quick, **read-only** scan of an AWS account to surface the biggest cost drivers 
 
 ## Step 1 — Verify identity and region
 
-// turbo
-
 ```bash
 PROFILE_FLAG="${PROFILE:+--profile $PROFILE}"
 aws sts get-caller-identity $PROFILE_FLAG
@@ -38,8 +36,6 @@ mkdir -p "${REPORT_DIR:-./aws-cost-quickscan-reports}"
 ---
 
 ## Step 2 — Cost Explorer: top spend by service
-
-// turbo
 
 ```bash
 START_DATE=$(date -u -v-${LOOKBACK_DAYS}d +%Y-%m-%d 2>/dev/null || date -u -d "${LOOKBACK_DAYS} days ago" +%Y-%m-%d)
@@ -81,8 +77,6 @@ Flag:
 
 ## Step 3 — EC2 waste: stopped, idle, over-provisioned
 
-// turbo
-
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
 
@@ -116,8 +110,6 @@ Flag:
 ---
 
 ## Step 4 — EBS waste: unattached volumes and old snapshots
-
-// turbo
 
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
@@ -156,8 +148,6 @@ Flag:
 
 ## Step 5 — Elastic IPs and load balancers
 
-// turbo
-
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
 
@@ -193,8 +183,6 @@ Flag:
 
 ## Step 6 — NAT Gateways
 
-// turbo
-
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
 
@@ -228,8 +216,6 @@ Flag:
 
 ## Step 7 — RDS waste
 
-// turbo
-
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
 
@@ -255,8 +241,6 @@ Flag:
 ---
 
 ## Step 8 — S3 and CloudWatch Logs
-
-// turbo
 
 ```bash
 echo "=== Largest S3 buckets (by size, sampled) ==="
@@ -298,8 +282,6 @@ Flag:
 ---
 
 ## Step 9 — Lambda audit
-
-// turbo
 
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
@@ -373,8 +355,6 @@ Flag:
 ---
 
 ## Step 11 — Savings Plans and Reserved Instances coverage
-
-// turbo
 
 ```bash
 echo "=== Active Savings Plans ==="

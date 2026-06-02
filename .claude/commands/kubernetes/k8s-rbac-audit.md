@@ -21,8 +21,6 @@ Inventory and risk-rank ClusterRoles, Roles, and their bindings. Spot the usual 
 
 ## Step 1 — Inventory
 
-// turbo
-
 ```bash
 kubectl get clusterroles -o json | jq '.items | length' | xargs -I{} echo "ClusterRoles: {}"
 kubectl get clusterrolebindings -o json | jq '.items | length' | xargs -I{} echo "ClusterRoleBindings: {}"
@@ -36,8 +34,6 @@ kubectl get sa $SCOPE -o json | jq '.items | length' | xargs -I{} echo "ServiceA
 
 ## Step 2 — cluster-admin bindings (highest risk)
 
-// turbo
-
 ```bash
 kubectl get clusterrolebindings -o json | jq -r '
   .items[] | select(.roleRef.name=="cluster-admin") |
@@ -50,8 +46,6 @@ Flag every subject. Especially: `system:authenticated`, `system:unauthenticated`
 ---
 
 ## Step 3 — Wildcards in ClusterRoles and Roles
-
-// turbo
 
 ```bash
 echo "=== ClusterRoles with wildcard verbs/resources/apiGroups ==="
@@ -79,8 +73,6 @@ kubectl get roles -A -o json | jq -r '
 
 ## Step 4 — Risky verbs / resources
 
-// turbo
-
 ```bash
 RISKY_VERBS='create|update|patch|delete|deletecollection|impersonate|escalate|bind'
 RISKY_RES='secrets|pods/exec|pods/attach|pods/portforward|nodes/proxy|certificatesigningrequests|tokenreviews|subjectaccessreviews|clusterrolebindings|rolebindings|clusterroles|roles|serviceaccounts/token|persistentvolumes'
@@ -106,8 +98,6 @@ Pay extra attention to:
 
 ## Step 5 — ServiceAccount → ClusterRole/Role mapping
 
-// turbo
-
 ```bash
 # All SA bindings cluster-wide
 kubectl get clusterrolebindings -o json | jq -r '
@@ -128,8 +118,6 @@ Flag: SAs bound to `cluster-admin`; SAs with multiple high-power bindings; defau
 
 ## Step 6 — Workloads using non-default ServiceAccounts
 
-// turbo
-
 ```bash
 [ "$NAMESPACE" = "all" ] && S="-A" || S="-n $NAMESPACE"
 kubectl get pods $S -o json | jq -r '
@@ -142,8 +130,6 @@ Flag: workloads still on `default` SA (best practice: dedicated SA per app); `au
 ---
 
 ## Step 6b — ServiceAccount token exposure and secret references
-
-// turbo
 
 ```bash
 [ "$NAMESPACE" = "all" ] && S="-A" || S="-n $NAMESPACE"
@@ -167,8 +153,6 @@ Flag: ServiceAccounts that do not need Kubernetes API access but still automount
 
 ## Step 7 — Aggregated ClusterRoles & built-in escalation paths
 
-// turbo
-
 ```bash
 kubectl get clusterroles -o json | jq -r '
   .items[] | select(.aggregationRule != null) |
@@ -186,8 +170,6 @@ Flag: custom CRs aggregating into `admin` or `edit` that grant unexpected verbs 
 
 ## Step 8 — Unused roles (heuristic)
 
-// turbo
-
 ```bash
 # ClusterRoles with no binding referencing them
 ALL_CR=$(kubectl get clusterroles -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | sort -u)
@@ -203,8 +185,6 @@ Heuristic only — system-managed CRs may legitimately have no bindings yet.
 
 ## Step 9 — Group / user subjects (catch leftover human accounts)
 
-// turbo
-
 ```bash
 kubectl get clusterrolebindings,rolebindings -A -o json | jq -r '
   .items[] | (.kind + " " + (.metadata.namespace // "-") + "/" + .metadata.name) as $b |
@@ -218,8 +198,6 @@ Flag: bindings to `system:masters` Group (effectively cluster-admin), individual
 ---
 
 ## Step 10 — "Who can do X?" sanity checks
-
-// turbo
 
 ```bash
 for q in "create pods" "get secrets" "create clusterrolebindings" "impersonate users" "create serviceaccounts/token" "patch nodes" "create pods/exec"; do
