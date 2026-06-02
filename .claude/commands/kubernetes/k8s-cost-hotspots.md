@@ -22,8 +22,6 @@ Identify the workloads, namespaces, and resources most likely to be wasting mone
 
 ## Step 1 — Cluster capacity baseline
 
-// turbo
-
 ```bash
 kubectl top nodes 2>/dev/null
 kubectl get nodes -o json | jq -r '
@@ -42,8 +40,6 @@ Capture totals: total allocatable CPU/memory, instance-type mix, zones (cross-AZ
 ---
 
 ## Step 2 — Sum of requests vs cluster allocatable (over/under commit)
-
-// turbo
 
 ```bash
 kubectl get pods -A -o json | jq '
@@ -93,8 +89,6 @@ Flag: memory usage > 80% of limit (OOM risk), CPU usage at limit (throttling —
 
 ## Step 5 — Workloads with no requests/limits (unbillable & noisy-neighbour)
 
-// turbo
-
 ```bash
 kubectl get pods $S -o json | jq -r '
   .items[] | .metadata.namespace as $ns | .metadata.name as $p |
@@ -108,8 +102,6 @@ Flag: BestEffort QoS pods (no requests anywhere) — first to be evicted, hardes
 ---
 
 ## Step 6 — Idle / zero-replica workloads still consuming infra
-
-// turbo
 
 ```bash
 kubectl get deploy -A -o json | jq -r '.items[] | select((.spec.replicas // 0) == 0) | "\(.metadata.namespace)/\(.metadata.name) replicas=0"'
@@ -127,8 +119,6 @@ Flag: `LoadBalancer` services with no endpoints (paying for cloud LB doing nothi
 ---
 
 ## Step 7 — Orphaned and over-sized PVCs
-
-// turbo
 
 ```bash
 # PVCs not mounted by any pod
@@ -150,8 +140,6 @@ Flag: orphaned PVCs (still being billed by cloud provider), `Released` PVs with 
 
 ## Step 8 — LoadBalancer & cloud-resource sprawl
 
-// turbo
-
 ```bash
 # Each LB svc = a cloud LB ($$ per month even if idle)
 kubectl get svc -A --field-selector spec.type=LoadBalancer
@@ -168,8 +156,6 @@ Flag: many `LoadBalancer` services where one Ingress + many backends would suffi
 ---
 
 ## Step 9 — Replicas vs actual concurrency (over-replicated)
-
-// turbo
 
 ```bash
 kubectl get hpa -A 2>/dev/null

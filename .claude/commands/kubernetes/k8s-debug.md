@@ -30,8 +30,6 @@ Confirm the inputs and current context with the user before proceeding.
 
 ## Step 1 — Verify connectivity and context
 
-// turbo
-
 ```bash
 kubectl config current-context
 kubectl cluster-info
@@ -48,8 +46,6 @@ Stop the workflow if `cluster-info` fails — kubectl is not configured. Report 
 
 ## Step 2 — Cluster inventory
 
-// turbo
-
 ```bash
 kubectl get nodes -o wide
 kubectl get ns
@@ -63,8 +59,6 @@ Capture: kubernetes version, node count, kubelet versions, container runtimes, O
 ---
 
 ## Step 3 — Node health
-
-// turbo
 
 ```bash
 kubectl get nodes -o json | jq -r '
@@ -90,8 +84,6 @@ Flag: `Ready != True`, any `*Pressure=True`, unschedulable nodes, kubelet versio
 ## Step 4 — Pod health (cluster-wide or scoped)
 
 Use `-A` if NAMESPACE=all, otherwise `-n $NAMESPACE`.
-
-// turbo
 
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
@@ -209,8 +201,6 @@ This gives a "noisiest pods" ranking even when no pods are in a failed state.
 
 ## Step 6 — Workload controllers
 
-// turbo
-
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
 kubectl get deploy,sts,ds,rs,job,cronjob $SCOPE
@@ -266,8 +256,6 @@ kubectl get pods $SCOPE -o json | jq -r --arg cutoff "$(date -u -v-30M +%Y-%m-%d
 
 ## Step 6b — HPA and autoscaling health
 
-// turbo
-
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
 
@@ -302,8 +290,6 @@ Flag:
 
 ## Step 7 — Events (cluster-wide warnings)
 
-// turbo
-
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
 kubectl get events $SCOPE --sort-by=.lastTimestamp | tail -100
@@ -315,8 +301,6 @@ Aggregate Warning events by `reason` and `involvedObject.kind`. Highlight: `Fail
 ---
 
 ## Step 8 — Networking
-
-// turbo
 
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
@@ -351,8 +335,6 @@ kubectl run k8s-debug-net --rm -it --restart=Never --image=nicolaka/netshoot --c
 
 ## Step 9 — Storage
 
-// turbo
-
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
 kubectl get sc
@@ -371,8 +353,6 @@ Flag: `Pending` PVCs (no SC, no provisioner, capacity), `Released` PVs not recla
 
 ## Step 10 — Configuration & secrets sanity
 
-// turbo
-
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
 kubectl get cm $SCOPE | wc -l
@@ -389,8 +369,6 @@ Do **not** print secret values. Only metadata and counts.
 
 ## Step 11 — RBAC sanity (current identity)
 
-// turbo
-
 ```bash
 kubectl auth whoami 2>/dev/null || kubectl config view --minify -o jsonpath='{.users[0].name}'
 kubectl auth can-i get pods -A
@@ -404,8 +382,6 @@ Note any restrictions; some later steps may legitimately fail because of RBAC, n
 ---
 
 ## Step 12 — Resource pressure & quotas
-
-// turbo
 
 ```bash
 SCOPE="-A"; [ "$NAMESPACE" != "all" ] && SCOPE="-n $NAMESPACE"
@@ -424,8 +400,6 @@ kubectl get pods $SCOPE -o json | jq -r '.items[] | .metadata as $m | .status.co
 
 ## Step 13 — Control-plane add-ons (best-effort)
 
-// turbo
-
 ```bash
 kubectl -n kube-system get pods -o wide
 kubectl -n kube-system get pods --field-selector=status.phase!=Running,status.phase!=Succeeded
@@ -438,8 +412,6 @@ done
 ---
 
 ## Step 14 — Certificates & webhooks
-
-// turbo
 
 ```bash
 kubectl get validatingwebhookconfigurations

@@ -30,8 +30,6 @@ Confirm the inputs and caller identity with the user before proceeding.
 
 ## Step 1 — Verify identity and account context
 
-// turbo
-
 ```bash
 aws sts get-caller-identity
 aws configure get region
@@ -43,8 +41,6 @@ Stop the workflow if `get-caller-identity` fails — AWS CLI is not configured. 
 ---
 
 ## Step 2 — IAM users, access keys, and MFA
-
-// turbo
 
 ```bash
 echo "=== IAM credential report ==="
@@ -85,8 +81,6 @@ Flag:
 ---
 
 ## Step 3 — IAM policies and privilege escalation risks
-
-// turbo
 
 ### Always run — bulk privilege checks (fast)
 
@@ -139,8 +133,6 @@ Flag:
 
 ## Step 4 — S3 bucket security
 
-// turbo
-
 ```bash
 echo "=== S3 buckets ==="
 aws s3api list-buckets --query 'Buckets[].Name' --output text | tr '\t' '\n' | while read bucket; do
@@ -178,8 +170,6 @@ Flag:
 
 ## Step 5 — EC2 and security groups
 
-// turbo
-
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
 
@@ -214,8 +204,6 @@ Flag:
 
 ## Step 6 — RDS security
 
-// turbo
-
 ```bash
 REGIONS="${ALL_REGIONS_LIST:-$REGION}"
 
@@ -244,8 +232,6 @@ Flag:
 ---
 
 ## Step 7 — CloudTrail, Config, GuardDuty, SecurityHub
-
-// turbo
 
 ```bash
 echo "=== CloudTrail trails ==="
@@ -284,8 +270,6 @@ Flag:
 
 ## Step 8 — KMS key rotation and ECR
 
-// turbo
-
 ```bash
 echo "=== KMS keys without rotation ==="
 for key in $(aws kms list-keys --query 'Keys[].KeyId' --output text 2>/dev/null); do
@@ -312,8 +296,6 @@ Flag:
 ---
 
 ## Step 9 — Password policy and account-level settings
-
-// turbo
 
 ```bash
 echo "=== Account password policy ==="

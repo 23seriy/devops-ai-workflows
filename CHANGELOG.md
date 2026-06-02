@@ -62,7 +62,7 @@ All notable changes to this project will be documented in this file.
 - **`code-review-devops.md`** — DevOps code review prompt
 
 ### Added — Rules
-- **`devops-agent.windsurfrules`** — AI safety guardrails for DevOps repos
+- **`devops-agent.md`** rule set — AI safety guardrails for DevOps repos
 
 ### Added — Scripts
 - **`k8s-snapshot.sh`** — cluster state snapshot to Markdown

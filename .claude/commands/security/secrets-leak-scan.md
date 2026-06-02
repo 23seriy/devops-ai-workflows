@@ -22,8 +22,6 @@ Scan a git repository's **full commit history** for accidentally committed secre
 
 ## Step 1 — Detect available tools
 
-// turbo
-
 ```bash
 echo "=== Available scanners ==="
 command -v gitleaks >/dev/null && echo "gitleaks: $(gitleaks version 2>&1)" || echo "gitleaks: not installed"
@@ -146,8 +144,6 @@ If the secret is only in history (not current HEAD), it's still a risk — the g
 ---
 
 ## Step 4 — Check .gitignore coverage
-
-// turbo
 
 ```bash
 cd $REPO_PATH

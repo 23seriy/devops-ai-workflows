@@ -27,8 +27,6 @@ Confirm inputs and current `kubectl config current-context` before proceeding.
 
 ## Step 1 — Identify the workload and owned pods
 
-// turbo
-
 ```bash
 kubectl -n $NAMESPACE get $KIND $NAME -o wide
 kubectl -n $NAMESPACE describe $KIND $NAME
@@ -42,8 +40,6 @@ echo "Selector: ${SEL:-<pod direct>}"
 ---
 
 ## Step 2 — Rollout / revision history (deploy & sts only)
-
-// turbo
 
 ```bash
 case "$KIND" in
@@ -62,8 +58,6 @@ Flag: stuck rollout, multiple active ReplicaSets, frequent revisions (deploy thr
 ---
 
 ## Step 3 — Spec sanity check
-
-// turbo
 
 ```bash
 kubectl -n $NAMESPACE get $KIND $NAME -o json | jq '{
@@ -95,8 +89,6 @@ Flag: missing requests/limits, no probes, no readinessProbe (rolling updates lie
 ---
 
 ## Step 4 — Pod-level health for owned pods
-
-// turbo
 
 ```bash
 kubectl -n $NAMESPACE get pods -l "$SEL" -o json | jq -r '
@@ -158,8 +150,6 @@ Flag: init container failures hidden behind `Init:Error` / `PodInitializing`; si
 
 ## Step 6 — Probe failure analysis
 
-// turbo
-
 ```bash
 kubectl -n $NAMESPACE get events --field-selector reason=Unhealthy --sort-by=.lastTimestamp | tail -50
 kubectl -n $NAMESPACE get events --field-selector reason=ProbeWarning --sort-by=.lastTimestamp | tail -50
@@ -170,8 +160,6 @@ Cross-reference probe configs from Step 3 against failures. Flag: too-aggressive
 ---
 
 ## Step 7 — Resource usage vs requests/limits
-
-// turbo
 
 ```bash
 kubectl -n $NAMESPACE top pods -l "$SEL" --containers 2>/dev/null || echo "metrics-server not available"
@@ -187,8 +175,6 @@ Flag: usage > 80% of limit (throttling/OOM risk), usage << request (over-provisi
 ---
 
 ## Step 8 — Networking exposure
-
-// turbo
 
 ```bash
 # Services that select these pods
@@ -230,8 +216,6 @@ Flag: resource managed by ArgoCD/Flux/Helm where manual `kubectl edit/apply` cha
 
 ## Step 9 — Storage (PVCs and mounts)
 
-// turbo
-
 ```bash
 kubectl -n $NAMESPACE get $KIND $NAME -o json | jq -r '
   .spec.template.spec.volumes[]? | select(.persistentVolumeClaim) |
@@ -251,8 +235,6 @@ Flag: PVC not Bound, FailedMount events, ReadWriteOnce PVC referenced by multi-r
 
 ## Step 10 — Config & secrets referenced
 
-// turbo
-
 ```bash
 kubectl -n $NAMESPACE get $KIND $NAME -o json | jq -r '
   .spec.template.spec |
@@ -270,8 +252,6 @@ Flag: referenced ConfigMap/Secret missing → `CreateContainerConfigError`. Do *
 ---
 
 ## Step 11 — Image and pull diagnostics
-
-// turbo
 
 ```bash
 kubectl -n $NAMESPACE get $KIND $NAME -o jsonpath='{.spec.template.spec.containers[*].image}{"\n"}'

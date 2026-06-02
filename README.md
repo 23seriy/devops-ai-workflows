@@ -2,7 +2,7 @@
 
 A growing collection of **AI-agent workflows, prompts, and rules** for day-to-day DevOps / SRE / platform work.
 
-> Note: "workflows" here means **AI coding-agent workflows** (Windsurf, Cursor, Claude Code, etc.) — *not* GitHub Actions.
+> Note: "workflows" here means **Claude Code slash commands / AI-agent workflows** — *not* GitHub Actions.
 
 ## What's inside
 
@@ -10,7 +10,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 |---|---|---|
 | [`.claude/commands/`](./.claude/commands) | Workflow definitions, grouped by domain. Auto-discovered as slash commands by Claude Code. | Everyone |
 | [`prompts/`](./prompts) | Reusable system / task prompts (incident triage, code review, post-mortem, etc.) | Any LLM |
-| [`rules/`](./rules) | Editor / agent rule files (`.windsurfrules`, `.cursorrules`, Copilot instructions) | Per-tool |
+| [`rules/`](./rules) | Reusable safety rule sets to load into Claude Code (via `CLAUDE.md` `@`-reference) or any other agent | Any agent |
 | [`scripts/`](./scripts) | Standalone shell scripts referenced by workflows | Anyone with a shell |
 
 ## Available workflows
@@ -81,13 +81,13 @@ Reusable system prompts you can paste into any AI agent for common DevOps tasks:
 
 ## Rules
 
-Persistent instruction files that shape AI behavior. Copy into a project's `.windsurf/rules/` or use as `.windsurfrules`:
+Reusable, agent-agnostic safety rule sets. Reference them from a project's `CLAUDE.md` (e.g. `@rules/kubernetes.md`), paste into a system prompt, or include as context:
 
 | Rule file | What it does |
 |---|---|
-| [devops-agent.windsurfrules](./rules/devops-agent.windsurfrules) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context, GitOps awareness, multi-repo coordination. |
-| [terraform.windsurfrules](./rules/terraform.windsurfrules) | Terraform-specific: state safety, ForceNew attribute warnings, provider/module pinning, workspace safety, import workflow, `prevent_destroy` reminders. |
-| [kubernetes.windsurfrules](./rules/kubernetes.windsurfrules) | Kubernetes-specific: context verification, dry-run first, Helm safety, ArgoCD/GitOps awareness, secret handling, debugging approach, RBAC best practices. |
+| [devops-agent.md](./rules/devops-agent.md) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context, GitOps awareness, multi-repo coordination. |
+| [terraform.md](./rules/terraform.md) | Terraform-specific: state safety, ForceNew attribute warnings, provider/module pinning, workspace safety, import workflow, `prevent_destroy` reminders. |
+| [kubernetes.md](./rules/kubernetes.md) | Kubernetes-specific: context verification, dry-run first, Helm safety, ArgoCD/GitOps awareness, secret handling, debugging approach, RBAC best practices. |
 
 ## Scripts
 
@@ -106,15 +106,12 @@ Standalone shell utilities referenced by workflows or useful on their own:
 
 Clone the repo and run Claude Code from the repo root. Every workflow under [`.claude/commands/`](./.claude/commands) is auto-discovered as a slash command — `.claude/commands/kubernetes/k8s-debug.md` is invoked as `/k8s-debug`, etc.
 
-### In Windsurf / Cursor / other agents
+### In other AI agents
 
 Open the matching file in [`.claude/commands/`](./.claude/commands) and either:
 
-- invoke it as a slash command if your agent supports workflow discovery from this repo,
 - paste the relevant section into the agent's chat, or
 - include the file as context and ask the agent to follow it.
-
-> The `// turbo` markers in workflow steps are a Windsurf convention that auto-approves the following command block. Claude Code and other agents ignore them.
 
 ### As a plain human workflow
 

@@ -29,8 +29,6 @@ Static analysis of Jenkins pipeline code — Jenkinsfiles (declarative or script
 
 ## Step 1 — Discover and read pipeline files
 
-// turbo
-
 ```bash
 find ${PIPELINE_PATH:-.} \( -name 'Jenkinsfile*' -o -name '*.groovy' \) \
   -not -path '*/node_modules/*' -not -path '*/.git/*' | head -30

@@ -1,6 +1,6 @@
 # DevOps Agent Rules
-# Copy this file to any repo's .windsurf/rules/ or use as .windsurfrules
-# These rules shape AI behavior for safe DevOps workflows.
+
+Agent-agnostic safety guardrails for DevOps work. Reference from a project's `CLAUDE.md`, paste into a system prompt, or include as context when working in any DevOps repo.
 
 ## Safety — non-negotiable
 

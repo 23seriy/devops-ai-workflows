@@ -22,8 +22,6 @@ Run this *before* upgrading the control plane or rolling node pools. Surfaces de
 
 ## Step 1 — Current versions and skew
 
-// turbo
-
 ```bash
 kubectl version --output=yaml
 kubectl get nodes -o json | jq -r '
@@ -39,8 +37,6 @@ Skew rules to flag:
 ---
 
 ## Step 2 — Deprecated / removed APIs in cluster objects
-
-// turbo
 
 ```bash
 if command -v kubent >/dev/null 2>&1; then
@@ -75,8 +71,6 @@ fi
 
 ## Step 3 — Aggregated APIServices health
 
-// turbo
-
 ```bash
 kubectl get apiservices -o json | jq -r '
   .items[] | select(.spec.service != null) |
@@ -90,8 +84,6 @@ Any non-Available aggregated API will block / break upgrades. Common offenders: 
 ---
 
 ## Step 4 — Admission webhooks pointing at fragile services
-
-// turbo
 
 ```bash
 echo "=== Validating webhooks ==="
@@ -109,8 +101,6 @@ For each webhook: confirm the target Service has Endpoints (Step 8 of `/k8s-debu
 ---
 
 ## Step 5 — PodDisruptionBudget coverage
-
-// turbo
 
 ```bash
 # Workloads with replicas > 1 but no PDB selecting them
@@ -133,8 +123,6 @@ kubectl get pdb -A -o json | jq -r '.items[] |
 
 ## Step 6 — Single-replica workloads that will cause downtime
 
-// turbo
-
 ```bash
 kubectl get deploy,sts -A -o json | jq -r '
   .items[] | select((.spec.replicas // 1) == 1 and (.metadata.namespace | test("^kube-|^calico|^ingress|^cert-manager")|not)) |
@@ -146,8 +134,6 @@ Inform the owners — these will have a downtime window during node drain.
 ---
 
 ## Step 7 — Certificate expiry
-
-// turbo
 
 ```bash
 # Control-plane certs (only on managed access; for self-managed run on master): kubeadm certs check-expiration
@@ -172,8 +158,6 @@ Flag: any cert expiring within 30 days of upgrade window.
 
 ## Step 8 — Workloads relying on PodSecurityPolicy / removed beta features
 
-// turbo
-
 ```bash
 # PSP was removed in 1.25 — should be 0
 kubectl get psp 2>&1 | head
@@ -187,8 +171,6 @@ Flag: clusters still pinned to deprecated in-tree volume plugins on versions whe
 ---
 
 ## Step 9 — Node pool readiness
-
-// turbo
 
 ```bash
 # Cordoned / unschedulable nodes already
@@ -206,8 +188,6 @@ Flag: cluster running near node capacity → during a rolling upgrade there's no
 ---
 
 ## Step 10 — CRDs and operators
-
-// turbo
 
 ```bash
 kubectl get crds -o json | jq -r '
