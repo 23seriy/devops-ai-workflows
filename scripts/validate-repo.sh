@@ -27,7 +27,7 @@ while IFS= read -r file; do
     echo "❌ Missing frontmatter: $file"
     errors=$((errors + 1))
   fi
-done < <(find workflows -name '*.md' | sort)
+done < <(find .claude/commands -name '*.md' | sort)
 [ "$errors" -eq 0 ] && echo "✅ Workflow frontmatter OK"
 echo ""
 
