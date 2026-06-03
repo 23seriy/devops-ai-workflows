@@ -1,0 +1,8 @@
+# Code owners for devops-ai-workflows.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Owners listed here are automatically requested for review on PRs that touch
+# matching paths. The last matching pattern wins.
+
+# Default owner for everything in the repo.
+* @23seriy

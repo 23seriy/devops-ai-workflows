@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+_No changes yet._
+
+## [1.1.0] — 2026-06-02
+
+### Added — Repo
+- **`SECURITY.md`** — vulnerability disclosure policy using GitHub Security Advisories
+- **`.github/CODEOWNERS`** — review routing for PRs
+- **`.github/dependabot.yml`** — weekly GitHub Actions dependency updates
+
 ### Added — Workflows
 - **`/helm-chart-review`** — review Helm charts for security, reliability, and best practices (kubernetes/)
 - **`/secrets-leak-scan`** — scan git repos for leaked secrets using gitleaks, trufflehog, or regex (security/)
