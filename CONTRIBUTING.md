@@ -4,7 +4,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
 
 ## Adding a new workflow
 
-1. **Create the workflow** at `.claude/commands/<domain>/<name>.md` with this skeleton (the file doubles as a Claude Code slash command — `/<name>`):
+1. **Create the workflow** at `.claude/commands/<name>.md` with this skeleton (the file doubles as a Claude Code slash command — `/<name>`):
 
    ```markdown
    ---
@@ -46,7 +46,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
 
 ## PR checklist
 
-- [ ] `.claude/commands/<domain>/<name>.md` added
+- [ ] `.claude/commands/<name>.md` added
 - [ ] README *Available workflows* table updated
 - [ ] All commands are read-only or gated behind an opt-in flag
 - [ ] No secret values printed

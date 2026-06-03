@@ -8,7 +8,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 
 | Folder | Purpose | Audience |
 |---|---|---|
-| [`.claude/commands/`](./.claude/commands) | Workflow definitions, grouped by domain. Auto-discovered as slash commands by Claude Code. | Everyone |
+| [`.claude/commands/`](./.claude/commands) | Workflow definitions, auto-discovered as slash commands by Claude Code. | Everyone |
 | [`prompts/`](./prompts) | Reusable system / task prompts (incident triage, code review, post-mortem, etc.) | Any LLM |
 | [`rules/`](./rules) | Reusable safety rule sets to load into Claude Code (via `CLAUDE.md` `@`-reference) or any other agent | Any agent |
 | [`scripts/`](./scripts) | Standalone shell scripts referenced by workflows | Anyone with a shell |
@@ -19,50 +19,50 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [k8s-debug](./.claude/commands/kubernetes/k8s-debug.md) | `/k8s-debug` | General-purpose, read-only cluster diagnostics across nodes, pods, workloads, networking, storage, RBAC, events, and resource pressure. | `kubectl`. Optional: `jq`, metrics-server. |
-| [k8s-workload-debug](./.claude/commands/kubernetes/k8s-workload-debug.md) | `/k8s-workload-debug` | Deep-dive on a single Deployment / StatefulSet / DaemonSet / Job / Pod: rollout, spec, probes, resources, logs, networking, storage, config. | `kubectl`. Optional: `jq`, metrics-server. |
-| [k8s-rbac-audit](./.claude/commands/kubernetes/k8s-rbac-audit.md) | `/k8s-rbac-audit` | RBAC risk audit — wildcards, cluster-admin bindings, risky verb/resource combos, over-privileged ServiceAccounts, anonymous access. | `kubectl`, `jq`. Optional: `kubectl-who-can`. |
-| [k8s-cost-hotspots](./.claude/commands/kubernetes/k8s-cost-hotspots.md) | `/k8s-cost-hotspots` | Find waste: over-provisioned workloads, missing requests/limits, idle workloads, orphan PVCs/PVs, idle LoadBalancers. | `kubectl`, `jq`, metrics-server. |
-| [k8s-upgrade-readiness](./.claude/commands/kubernetes/k8s-upgrade-readiness.md) | `/k8s-upgrade-readiness` | Pre-flight before a control-plane / node upgrade: deprecated APIs, version skew, PDB gaps, expiring certs, broken webhooks. | `kubectl`. Optional: `kubent` or `pluto`, `helm`. |
-| [helm-release-debug](./.claude/commands/kubernetes/helm-release-debug.md) | `/helm-release-debug` | Diagnose a stuck or failed Helm release: history, values diff, hook failures, rendered manifest vs cluster, workload health. | `helm` v3, `kubectl`. Optional: `jq`, `yq`. |
-| [helm-chart-review](./.claude/commands/kubernetes/helm-chart-review.md) | `/helm-chart-review` | Review a Helm chart for security, reliability, and best practices: resource specs, probes, security context, PDBs, anti-affinity, RBAC. | Helm chart source. Optional: `helm` CLI. |
+| [k8s-debug](./.claude/commands/k8s-debug.md) | `/k8s-debug` | General-purpose, read-only cluster diagnostics across nodes, pods, workloads, networking, storage, RBAC, events, and resource pressure. | `kubectl`. Optional: `jq`, metrics-server. |
+| [k8s-workload-debug](./.claude/commands/k8s-workload-debug.md) | `/k8s-workload-debug` | Deep-dive on a single Deployment / StatefulSet / DaemonSet / Job / Pod: rollout, spec, probes, resources, logs, networking, storage, config. | `kubectl`. Optional: `jq`, metrics-server. |
+| [k8s-rbac-audit](./.claude/commands/k8s-rbac-audit.md) | `/k8s-rbac-audit` | RBAC risk audit — wildcards, cluster-admin bindings, risky verb/resource combos, over-privileged ServiceAccounts, anonymous access. | `kubectl`, `jq`. Optional: `kubectl-who-can`. |
+| [k8s-cost-hotspots](./.claude/commands/k8s-cost-hotspots.md) | `/k8s-cost-hotspots` | Find waste: over-provisioned workloads, missing requests/limits, idle workloads, orphan PVCs/PVs, idle LoadBalancers. | `kubectl`, `jq`, metrics-server. |
+| [k8s-upgrade-readiness](./.claude/commands/k8s-upgrade-readiness.md) | `/k8s-upgrade-readiness` | Pre-flight before a control-plane / node upgrade: deprecated APIs, version skew, PDB gaps, expiring certs, broken webhooks. | `kubectl`. Optional: `kubent` or `pluto`, `helm`. |
+| [helm-release-debug](./.claude/commands/helm-release-debug.md) | `/helm-release-debug` | Diagnose a stuck or failed Helm release: history, values diff, hook failures, rendered manifest vs cluster, workload health. | `helm` v3, `kubectl`. Optional: `jq`, `yq`. |
+| [helm-chart-review](./.claude/commands/helm-chart-review.md) | `/helm-chart-review` | Review a Helm chart for security, reliability, and best practices: resource specs, probes, security context, PDBs, anti-affinity, RBAC. | Helm chart source. Optional: `helm` CLI. |
 
 ### AWS / Cloud
 
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [aws-account-audit](./.claude/commands/aws/aws-account-audit.md) | `/aws-account-audit` | Read-only AWS account security & hygiene audit: IAM, S3, EC2, RDS, CloudTrail, encryption, GuardDuty, SecurityHub. | `aws` CLI. Optional: `jq`. |
-| [aws-cost-quickscan](./.claude/commands/aws/aws-cost-quickscan.md) | `/aws-cost-quickscan` | Find AWS cost waste: idle EC2/RDS, unattached EBS, old snapshots, expensive log groups, NAT data processing, missing Savings Plans. | `aws` CLI, Cost Explorer enabled. Optional: `jq`. |
-| [aws-vpc-debug](./.claude/commands/aws/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
-| [aws-iam-policy-review](./.claude/commands/aws/aws-iam-policy-review.md) | `/aws-iam-policy-review` | Explain an IAM policy and flag risks: admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions. | `aws` CLI. Optional: `jq`. |
+| [aws-account-audit](./.claude/commands/aws-account-audit.md) | `/aws-account-audit` | Read-only AWS account security & hygiene audit: IAM, S3, EC2, RDS, CloudTrail, encryption, GuardDuty, SecurityHub. | `aws` CLI. Optional: `jq`. |
+| [aws-cost-quickscan](./.claude/commands/aws-cost-quickscan.md) | `/aws-cost-quickscan` | Find AWS cost waste: idle EC2/RDS, unattached EBS, old snapshots, expensive log groups, NAT data processing, missing Savings Plans. | `aws` CLI, Cost Explorer enabled. Optional: `jq`. |
+| [aws-vpc-debug](./.claude/commands/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
+| [aws-iam-policy-review](./.claude/commands/aws-iam-policy-review.md) | `/aws-iam-policy-review` | Explain an IAM policy and flag risks: admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions. | `aws` CLI. Optional: `jq`. |
 
 ### IaC
 
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [terraform-plan-review](./.claude/commands/iac/terraform-plan-review.md) | `/terraform-plan-review` | Explain a Terraform plan and flag risky changes: destroys, replacements, security group mutations, IAM changes, blast radius. | `terraform plan` output. Optional: `terraform` CLI, `jq`. |
+| [terraform-plan-review](./.claude/commands/terraform-plan-review.md) | `/terraform-plan-review` | Explain a Terraform plan and flag risky changes: destroys, replacements, security group mutations, IAM changes, blast radius. | `terraform plan` output. Optional: `terraform` CLI, `jq`. |
 
 ### Containers & CI/CD
 
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [ci-debug](./.claude/commands/cicd/ci-debug.md) | `/ci-debug` | Diagnose a failing CI/CD pipeline: parse build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines. Root cause analysis and fix suggestions. | Build log output. Optional: repo source, CI config file. |
-| [jenkins-pipeline-review](./.claude/commands/cicd/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
-| [release-checklist](./.claude/commands/cicd/release-checklist.md) | `/release-checklist` | Pre-release safety gate: scope, deploy order, rollback, tests, monitoring, and communication before production release. | PR/diff summary. Optional: test results, plans, diffs. |
-| [dockerfile-review](./.claude/commands/containers/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
+| [ci-debug](./.claude/commands/ci-debug.md) | `/ci-debug` | Diagnose a failing CI/CD pipeline: parse build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines. Root cause analysis and fix suggestions. | Build log output. Optional: repo source, CI config file. |
+| [jenkins-pipeline-review](./.claude/commands/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
+| [release-checklist](./.claude/commands/release-checklist.md) | `/release-checklist` | Pre-release safety gate: scope, deploy order, rollback, tests, monitoring, and communication before production release. | PR/diff summary. Optional: test results, plans, diffs. |
+| [dockerfile-review](./.claude/commands/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
 
 ### Security
 
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [secrets-leak-scan](./.claude/commands/security/secrets-leak-scan.md) | `/secrets-leak-scan` | Scan git repo history for leaked secrets: API keys, passwords, tokens, private keys. Uses gitleaks, trufflehog, or regex fallback. | Git repo. Optional: `gitleaks`, `trufflehog`. |
-| [repo-health](./.claude/commands/security/repo-health.md) | `/repo-health` | Audit repository hygiene: README, license, CI, branch/release hygiene, tracked secrets, ownership, and automation gaps. | Local git repo. Optional: `gh`, `jq`. |
+| [secrets-leak-scan](./.claude/commands/secrets-leak-scan.md) | `/secrets-leak-scan` | Scan git repo history for leaked secrets: API keys, passwords, tokens, private keys. Uses gitleaks, trufflehog, or regex fallback. | Git repo. Optional: `gitleaks`, `trufflehog`. |
+| [repo-health](./.claude/commands/repo-health.md) | `/repo-health` | Audit repository hygiene: README, license, CI, branch/release hygiene, tracked secrets, ownership, and automation gaps. | Local git repo. Optional: `gh`, `jq`. |
 
 ### Observability & Incident
 
 | Workflow | Slash command | Description | Prerequisites |
 |---|---|---|---|
-| [incident-triage](./.claude/commands/observability/incident-triage.md) | `/incident-triage` | Guided first 15 minutes of a production incident: timeline, blast radius, evidence gathering, mitigation suggestions. | Access to affected environment. |
+| [incident-triage](./.claude/commands/incident-triage.md) | `/incident-triage` | Guided first 15 minutes of a production incident: timeline, blast radius, evidence gathering, mitigation suggestions. | Access to affected environment. |
 
 More on the way — see [Roadmap](#roadmap).
 
@@ -104,7 +104,7 @@ Standalone shell utilities referenced by workflows or useful on their own:
 
 ### In Claude Code
 
-Clone the repo and run Claude Code from the repo root. Every workflow under [`.claude/commands/`](./.claude/commands) is auto-discovered as a slash command — `.claude/commands/kubernetes/k8s-debug.md` is invoked as `/k8s-debug`, etc.
+Clone the repo and run Claude Code from the repo root. Every workflow under [`.claude/commands/`](./.claude/commands) is auto-discovered as a slash command — `.claude/commands/k8s-debug.md` is invoked as `/k8s-debug`, etc.
 
 ### In other AI agents
 
@@ -121,14 +121,7 @@ Every workflow is just Markdown with shell commands. You can run the steps yours
 
 ```
 devops-ai-workflows/
-├── .claude/commands/        # Workflow definitions (Claude Code slash commands)
-│   ├── kubernetes/          # Kubernetes workflow definitions
-│   ├── aws/                 # AWS / cloud workflow definitions
-│   ├── iac/                 # Infrastructure as Code workflows
-│   ├── cicd/                # CI/CD pipeline workflows
-│   ├── containers/          # Container & image workflows
-│   ├── security/            # Security & repo hygiene workflows
-│   └── observability/       # Observability & incident workflows
+├── .claude/commands/        # Workflow definitions (Claude Code slash commands, flat)
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files
 ├── scripts/                 # Standalone shell helpers
@@ -177,7 +170,7 @@ Ideas I plan to add (PRs welcome):
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). The short version:
 
-1. Add the canonical workflow to `.claude/commands/<domain>/<name>.md`.
+1. Add the canonical workflow to `.claude/commands/<name>.md`.
 2. Update the **Available workflows** table in this README.
 3. Keep workflows **read-only by default**. Anything mutating must be opt-in (e.g. a `DEEP=yes` flag) and clearly flagged.
 

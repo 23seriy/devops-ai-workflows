@@ -4,7 +4,7 @@ DevOps AI workflows — read-only diagnostic and review workflows for Kubernetes
 
 ## Repo layout
 
-- `.claude/commands/<domain>/<name>.md` — workflow definitions, auto-discovered by Claude Code as `/<name>` slash commands. Source of truth.
+- `.claude/commands/<name>.md` — workflow definitions, auto-discovered by Claude Code as `/<name>` slash commands. Source of truth.
 - `prompts/` — reusable system prompts for any LLM (incident-commander, postmortem-writer, etc.).
 - `rules/` — agent-agnostic safety rule sets (`devops-agent.md`, `kubernetes.md`, `terraform.md`). When working on the relevant tech in a downstream repo, load the matching rule via `@rules/<name>.md`. The safety posture they describe (no prod changes without confirmation, prefer read-only, never hardcode secrets, GitOps awareness) applies to anything done in this repo too.
 - `scripts/` — standalone bash helpers (`k8s-snapshot.sh`, `aws-whoami.sh`, `stale-branches.sh`, `validate-repo.sh`).
@@ -13,7 +13,7 @@ DevOps AI workflows — read-only diagnostic and review workflows for Kubernetes
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). Non-negotiables when working in this repo:
 
-- File lives at `.claude/commands/<domain>/<name>.md` with YAML frontmatter containing a `description:` line — that's what slash-command pickers display.
+- File lives at `.claude/commands/<name>.md` with YAML frontmatter containing a `description:` line — that's what slash-command pickers display.
 - **Read-only by default.** Anything that creates / mutates / deletes resources must be gated behind an opt-in flag (`DEEP=yes`, `APPLY=yes`, etc.) AND clearly labelled in the step heading.
 - **No secret values in output.** Names, types, key lists, and counts only — never the actual value.
 - **Idempotent.** Running a workflow twice must not change cluster / account state.
