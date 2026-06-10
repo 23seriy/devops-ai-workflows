@@ -1,5 +1,6 @@
 ---
 description: Pre-release safety checklist for application, infrastructure, or platform changes. Reviews deploy order, rollback, tests, monitoring, and communication before release.
+argument-hint: "RELEASE_NAME=... [ENVIRONMENT=staging] [CHANGE_TYPE=app|infra|helm|terraform|pipeline|mixed]"
 ---
 
 # /release-checklist — Pre-Release Safety Gate

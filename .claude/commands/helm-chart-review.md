@@ -1,5 +1,6 @@
 ---
 description: Review a Helm chart for security, reliability, and best practices before deployment. Checks templates, values, resource specs, and RBAC. Read-only static analysis.
+argument-hint: "CHART_PATH=<dir|.tgz> [VALUES_FILE=...]"
 ---
 
 # /helm-chart-review — Helm Chart Best Practices Review

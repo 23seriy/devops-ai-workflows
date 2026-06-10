@@ -1,5 +1,6 @@
 ---
 description: Review a Dockerfile for security, size, caching, and best practices. Flags CVE-prone base images, leaked secrets, missing health checks, and optimization opportunities. Read-only analysis.
+argument-hint: "DOCKERFILE_PATH=<path|glob|dir> [CONTEXT_DIR=...]"
 ---
 
 # /dockerfile-review — Dockerfile Security & Optimization Review

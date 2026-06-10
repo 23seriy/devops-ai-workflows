@@ -1,5 +1,6 @@
 ---
 description: Read-only RBAC audit of a Kubernetes cluster. Surfaces wildcards, cluster-admin bindings, risky verbs, unused roles, and over-privileged service accounts. Produces a Markdown findings report.
+argument-hint: "[NAMESPACE=all]"
 ---
 
 # /k8s-rbac-audit — Kubernetes RBAC Audit

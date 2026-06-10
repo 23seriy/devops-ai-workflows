@@ -1,5 +1,6 @@
 ---
 description: Find Kubernetes cost and waste hotspots - over-provisioned workloads, idle resources, missing requests/limits, orphaned PVCs and load balancers. Read-only, produces a Markdown report.
+argument-hint: "[NAMESPACE=all] [TOP_N=20]"
 ---
 
 # /k8s-cost-hotspots — Kubernetes Cost & Waste Audit

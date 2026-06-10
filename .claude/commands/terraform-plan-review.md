@@ -1,5 +1,6 @@
 ---
 description: Explain a Terraform plan and flag risky changes. Detects resource destroys, replacements, security group mutations, IAM changes, and blast radius. Read-only analysis of plan output.
+argument-hint: "PLAN_SOURCE=text|file:<path>|stdin"
 ---
 
 # /terraform-plan-review — Terraform Plan Risk Analysis

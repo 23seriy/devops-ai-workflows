@@ -9,6 +9,8 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | Folder | Purpose | Audience |
 |---|---|---|
 | [`.claude/commands/`](./.claude/commands) | Workflow definitions, auto-discovered as slash commands by Claude Code. | Everyone |
+| [`.claude/agents/`](./.claude/agents) | Repo-maintenance subagents (e.g. `workflow-author`) invoked via the `Agent` tool. | Maintainers |
+| [`.claude/settings.json`](./.claude/settings.json) | Shared project settings: pre-approved read-only `Bash(...)` patterns + a deny list that blocks cluster/cloud mutations even if a workflow tries. | Claude Code users |
 | [`prompts/`](./prompts) | Reusable system / task prompts (incident triage, code review, post-mortem, etc.) | Any LLM |
 | [`rules/`](./rules) | Reusable safety rule sets to load into Claude Code (via `CLAUDE.md` `@`-reference) or any other agent | Any agent |
 | [`scripts/`](./scripts) | Standalone shell scripts referenced by workflows | Anyone with a shell |
@@ -104,7 +106,11 @@ Standalone shell utilities referenced by workflows or useful on their own:
 
 ### In Claude Code
 
-Clone the repo and run Claude Code from the repo root. Every workflow under [`.claude/commands/`](./.claude/commands) is auto-discovered as a slash command — `.claude/commands/k8s-debug.md` is invoked as `/k8s-debug`, etc.
+Clone the repo and run Claude Code from the repo root. Every workflow under [`.claude/commands/`](./.claude/commands) is auto-discovered as a slash command — `.claude/commands/k8s-debug.md` is invoked as `/k8s-debug`, etc. The `argument-hint` in each file's frontmatter is shown inline as you type.
+
+[`CLAUDE.md`](./CLAUDE.md) `@`-imports the rule files under [`rules/`](./rules), so the safety guardrails for Kubernetes, Terraform, and general DevOps work load automatically whenever you run Claude Code in this directory.
+
+[`.claude/settings.json`](./.claude/settings.json) pre-approves read-only bash patterns commonly used while developing here (validate-repo, find, grep, git status/diff/log) and denies cluster/cloud mutations (`kubectl apply|delete|scale`, `helm install|upgrade`, `terraform apply|destroy`, `aws iam create|delete|put`, etc.) — keeping the repo's read-only contract enforced at the tool level.
 
 ### In other AI agents
 
@@ -117,14 +123,31 @@ Open the matching file in [`.claude/commands/`](./.claude/commands) and either:
 
 Every workflow is just Markdown with shell commands. You can run the steps yourself in a terminal — no AI required.
 
+## Slash command frontmatter
+
+Every workflow declares two YAML keys:
+
+```yaml
+---
+description: One-sentence summary shown in the slash-command picker.
+argument-hint: "REQUIRED=<value> [OPTIONAL=default]"
+---
+```
+
+`description` shows up in the `/`-picker. `argument-hint` mirrors the Inputs section so users see expected args inline. See [CONTRIBUTING.md](./CONTRIBUTING.md) for examples.
+
 ## Repo layout
 
 ```
 devops-ai-workflows/
-├── .claude/commands/        # Workflow definitions (Claude Code slash commands, flat)
+├── .claude/
+│   ├── commands/            # Workflow definitions (Claude Code slash commands)
+│   ├── agents/              # Repo-maintenance subagents (workflow-author, ...)
+│   └── settings.json        # Shared allow/deny permissions
 ├── prompts/                 # Reusable LLM prompts
-├── rules/                   # Editor/agent rule files
+├── rules/                   # Editor/agent rule files (auto-loaded via CLAUDE.md)
 ├── scripts/                 # Standalone shell helpers
+├── CLAUDE.md                # Claude Code project instructions
 ├── CONTRIBUTING.md
 ├── LICENSE
 └── README.md

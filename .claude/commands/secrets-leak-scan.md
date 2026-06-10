@@ -1,5 +1,6 @@
 ---
 description: Scan a git repository for leaked secrets across full history. Uses gitleaks, trufflehog, or manual regex patterns. Read-only, generates a markdown report.
+argument-hint: "REPO_PATH=<path> [SCAN_SCOPE=full|recent]"
 ---
 
 # /secrets-leak-scan — Git Repository Secrets Scanner

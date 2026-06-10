@@ -1,5 +1,6 @@
 ---
 description: Find AWS cost waste and top spend areas. Scans for idle resources, unattached storage, over-provisioned instances, and expensive log groups. Read-only, generates a markdown report.
+argument-hint: "[PROFILE=...] [REGION=...] [LOOKBACK_DAYS=30] [DEEP=yes|no]"
 ---
 
 # /aws-cost-quickscan — AWS Cost & Waste Analysis

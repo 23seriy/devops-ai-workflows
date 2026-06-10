@@ -1,5 +1,6 @@
 ---
 description: Deep-dive read-only diagnostics for a single Kubernetes workload (Deployment, StatefulSet, DaemonSet, Job, or Pod). Inspects rollout history, events, probes, resources, logs, networking, and produces a focused Markdown report.
+argument-hint: "NAMESPACE=... KIND=deployment|statefulset|daemonset|job|cronjob|pod NAME=... [LOG_TAIL=500]"
 ---
 
 # /k8s-workload-debug — Single-Workload Deep Dive

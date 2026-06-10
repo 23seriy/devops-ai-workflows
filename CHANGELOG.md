@@ -4,7 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-_No changes yet._
+### Added — Claude Code
+- **`argument-hint`** frontmatter on every workflow — shows expected args inline in the slash-command picker
+- **`.claude/settings.json`** — shared project permissions: read-only bash allowlist + cluster/cloud-mutation denylist that enforces the repo's read-only contract at the tool layer
+- **`.claude/agents/workflow-author.md`** — repo subagent for reviewing new workflow files against the contribution rules
+- **CLAUDE.md `@`-imports** of `rules/devops-agent.md`, `rules/kubernetes.md`, `rules/terraform.md` so safety guardrails auto-load when Claude Code runs in this repo
+
+### Fixed
+- Removed bogus `auto_execution_mode: 2` frontmatter from `/k8s-upgrade-readiness` (left over from another editor)
+- `scripts/stale-branches.sh` no longer silently fails to skip the `main`/`master` branches (precedence bug in `||` + `&&` chain)
+- `scripts/*.sh` are now shellcheck-clean (argument flags converted to bash arrays, `read -r` used everywhere)
+
+### Improved
+- **`scripts/validate-repo.sh`** — checks for `description` + `argument-hint` in every workflow, validates `.claude/settings.json` parses, validates subagent frontmatter
+- **CI** — split into 3 jobs (validate, markdown, shellcheck); shellcheck now actually installs and fails the build on findings; least-privilege `permissions:` block added
 
 ## [1.1.0] — 2026-06-02
 
