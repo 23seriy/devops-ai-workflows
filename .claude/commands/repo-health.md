@@ -1,5 +1,6 @@
 ---
 description: Audit repository hygiene and maintainability. Checks README, license, CI, branch protection indicators, stale branches, secrets hygiene, dependency files, and release readiness.
+argument-hint: "REPO_PATH=<path> [STALE_DAYS=90]"
 ---
 
 # /repo-health — Repository Hygiene Audit

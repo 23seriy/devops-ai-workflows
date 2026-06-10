@@ -6,9 +6,21 @@ on:
   pull_request:
     branches: [main, master]
 
+permissions:
+  contents: read
+
 jobs:
-  lint:
-    name: Lint & Validate
+  validate:
+    name: Validate repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run validate-repo.sh (frontmatter, links, executability, JSON)
+        run: ./scripts/validate-repo.sh
+
+  markdown:
+    name: Markdown lint & link check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -27,45 +39,14 @@ jobs:
           config: '.github/.markdownlint.json'
         continue-on-error: true
 
-      - name: Validate workflow frontmatter
-        run: |
-          echo "Checking all workflows have frontmatter..."
-          errors=0
-          while IFS= read -r f; do
-            if ! head -1 "$f" | grep -q '^---$'; then
-              echo "❌ Missing frontmatter: $f"
-              errors=$((errors + 1))
-            fi
-          done < <(find .claude/commands -name '*.md')
-          echo "Checked $(find .claude/commands -name '*.md' | wc -l) workflows, $errors missing frontmatter"
-          [ "$errors" -eq 0 ] && echo "✅ All workflows have frontmatter"
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
 
-      - name: Check README workflow table matches files
-        run: |
-          echo "Checking README links match actual files..."
-          errors=0
-          for f in $(grep -oE '\./\.claude/commands/[^)]+\.md' README.md); do
-            if [ ! -f "$f" ]; then
-              echo "❌ README links to $f but file doesn't exist"
-              errors=$((errors + 1))
-            fi
-          done
-          echo "Checked $(grep -coE '\./\.claude/commands/[^)]+\.md' README.md) README links, $errors broken"
-          [ "$errors" -eq 0 ] && echo "✅ All README links are valid"
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
 
-      - name: Check scripts are executable
-        run: |
-          for f in scripts/*.sh; do
-            [ -f "$f" ] || continue
-            if [ ! -x "$f" ]; then
-              echo "❌ Not executable: $f"
-            fi
-          done
-
-      - name: Shellcheck scripts
-        run: |
-          if command -v shellcheck >/dev/null; then
-            shellcheck scripts/*.sh || true
-          else
-            echo "shellcheck not available, skipping"
-          fi
+      - name: Run shellcheck
+        run: shellcheck scripts/*.sh

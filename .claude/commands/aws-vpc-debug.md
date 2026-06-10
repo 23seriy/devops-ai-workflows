@@ -1,5 +1,6 @@
 ---
 description: Diagnose AWS VPC connectivity issues. Traces the path between a source and destination across security groups, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, and DNS. Read-only, generates a markdown report.
+argument-hint: "SOURCE=... DESTINATION=... PORT=... [PROTOCOL=tcp|udp] [REGION=...]"
 ---
 
 # /aws-vpc-debug — AWS VPC Connectivity Triage

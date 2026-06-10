@@ -1,5 +1,6 @@
 ---
 description: Explain an IAM policy and flag risky permissions. Detects admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions, and overly broad resource scopes. Read-only, generates a markdown report.
+argument-hint: "<POLICY_ARN | PRINCIPAL_ARN | POLICY_FILE=path/to/policy.json>"
 ---
 
 # /aws-iam-policy-review — IAM Policy Security Review

@@ -17,11 +17,12 @@ OUTPUT_DIR="${2:-.}"
 CONTEXT=$(kubectl config current-context 2>/dev/null || echo "unknown")
 TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
 
+SCOPE_ARGS=()
 if [ "$NAMESPACE" = "all" ]; then
-  SCOPE="-A"
+  SCOPE_ARGS=(-A)
   FILENAME="k8s-snapshot-${CONTEXT}-all-${TIMESTAMP}.md"
 else
-  SCOPE="-n $NAMESPACE"
+  SCOPE_ARGS=(-n "$NAMESPACE")
   FILENAME="k8s-snapshot-${CONTEXT}-${NAMESPACE}-${TIMESTAMP}.md"
 fi
 
@@ -69,61 +70,61 @@ echo ""
 
   echo "## Pods"
   echo '```'
-  kubectl get pods $SCOPE -o wide 2>&1 || true
+  kubectl get pods "${SCOPE_ARGS[@]}" -o wide 2>&1 || true
   echo '```'
   echo ""
 
   echo "## Pod resource usage"
   echo '```'
-  kubectl top pods $SCOPE --sort-by=memory 2>&1 | head -30 || echo "metrics-server not available"
+  kubectl top pods "${SCOPE_ARGS[@]}" --sort-by=memory 2>&1 | head -30 || echo "metrics-server not available"
   echo '```'
   echo ""
 
   echo "## Problem pods"
   echo '```'
-  kubectl get pods $SCOPE --field-selector='status.phase!=Running,status.phase!=Succeeded' -o wide 2>&1 || true
+  kubectl get pods "${SCOPE_ARGS[@]}" --field-selector='status.phase!=Running,status.phase!=Succeeded' -o wide 2>&1 || true
   echo '```'
   echo ""
 
   echo "## Deployments"
   echo '```'
-  kubectl get deploy $SCOPE 2>&1 || true
+  kubectl get deploy "${SCOPE_ARGS[@]}" 2>&1 || true
   echo '```'
   echo ""
 
   echo "## StatefulSets"
   echo '```'
-  kubectl get sts $SCOPE 2>&1 || true
+  kubectl get sts "${SCOPE_ARGS[@]}" 2>&1 || true
   echo '```'
   echo ""
 
   echo "## DaemonSets"
   echo '```'
-  kubectl get ds $SCOPE 2>&1 || true
+  kubectl get ds "${SCOPE_ARGS[@]}" 2>&1 || true
   echo '```'
   echo ""
 
   echo "## Services"
   echo '```'
-  kubectl get svc $SCOPE 2>&1 || true
+  kubectl get svc "${SCOPE_ARGS[@]}" 2>&1 || true
   echo '```'
   echo ""
 
   echo "## HPAs"
   echo '```'
-  kubectl get hpa $SCOPE -o wide 2>&1 || echo "none"
+  kubectl get hpa "${SCOPE_ARGS[@]}" -o wide 2>&1 || echo "none"
   echo '```'
   echo ""
 
   echo "## PVCs"
   echo '```'
-  kubectl get pvc $SCOPE 2>&1 || true
+  kubectl get pvc "${SCOPE_ARGS[@]}" 2>&1 || true
   echo '```'
   echo ""
 
   echo "## Recent warning events (last 50)"
   echo '```'
-  kubectl get events $SCOPE --field-selector type=Warning --sort-by=.lastTimestamp 2>&1 | tail -50 || true
+  kubectl get events "${SCOPE_ARGS[@]}" --field-selector type=Warning --sort-by=.lastTimestamp 2>&1 | tail -50 || true
   echo '```'
   echo ""
 

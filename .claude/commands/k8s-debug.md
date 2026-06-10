@@ -1,5 +1,6 @@
 ---
 description: General-purpose Kubernetes cluster debugger. Performs deep, read-only health and diagnostics checks against any cluster reachable via the current kubectl context. Generates a markdown report.
+argument-hint: "[NAMESPACE=all] [CONTEXT=...] [FOCUS_LABEL=...] [DEEP=yes|no]"
 ---
 
 # /k8s-debug — General Kubernetes Cluster Debugger

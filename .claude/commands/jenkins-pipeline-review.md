@@ -1,5 +1,6 @@
 ---
 description: Review a Jenkinsfile or Groovy shared-library pipeline for anti-patterns, security risks, reliability gaps, and best practices. Read-only static analysis of pipeline code.
+argument-hint: "PIPELINE_PATH=<Jenkinsfile|dir|vars/*.groovy> [PIPELINE_TYPE=auto] [BUILD_CONFIG_PATH=...]"
 ---
 
 # /jenkins-pipeline-review — Jenkinsfile & Pipeline Code Review

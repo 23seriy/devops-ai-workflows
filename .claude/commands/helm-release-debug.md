@@ -1,5 +1,6 @@
 ---
 description: Diagnose a stuck or failed Helm release. Reviews release history, hook failures, rendered manifests, values, and the resulting Kubernetes objects. Read-only, produces a Markdown report.
+argument-hint: "NAMESPACE=... RELEASE=..."
 ---
 
 # /helm-release-debug — Helm Release Diagnostics

@@ -9,32 +9,39 @@
 # ────────────────────────────────────────────────────────────────
 set -euo pipefail
 
-PROFILE_FLAG=""
-[ -n "${1:-}" ] && PROFILE_FLAG="--profile $1"
+PROFILE="${1:-}"
+
+aws_cmd() {
+  if [ -n "$PROFILE" ]; then
+    aws --profile "$PROFILE" "$@"
+  else
+    aws "$@"
+  fi
+}
 
 echo "🔍 AWS Identity Check"
 echo "====================="
 echo ""
 
 echo "--- Caller Identity ---"
-aws sts get-caller-identity $PROFILE_FLAG --output table 2>&1
+aws_cmd sts get-caller-identity --output table 2>&1
 
 echo ""
 echo "--- Region ---"
-REGION=$(aws configure get region $PROFILE_FLAG 2>/dev/null || echo "not set")
+REGION=$(aws_cmd configure get region 2>/dev/null || echo "not set")
 echo "Region: $REGION"
 
 echo ""
 echo "--- Account Aliases ---"
-aws iam list-account-aliases $PROFILE_FLAG --query 'AccountAliases[]' --output text 2>/dev/null || echo "(none or no permission)"
+aws_cmd iam list-account-aliases --query 'AccountAliases[]' --output text 2>/dev/null || echo "(none or no permission)"
 
 echo ""
 echo "--- Organization ---"
-aws organizations describe-organization $PROFILE_FLAG --query 'Organization.{Id:Id,Master:MasterAccountId,Email:MasterAccountEmail}' --output table 2>/dev/null || echo "Not in an org (or no permission)"
+aws_cmd organizations describe-organization --query 'Organization.{Id:Id,Master:MasterAccountId,Email:MasterAccountEmail}' --output table 2>/dev/null || echo "Not in an org (or no permission)"
 
 echo ""
 echo "--- SSO Role (if applicable) ---"
-ARN=$(aws sts get-caller-identity $PROFILE_FLAG --query 'Arn' --output text 2>/dev/null)
+ARN=$(aws_cmd sts get-caller-identity --query 'Arn' --output text 2>/dev/null)
 if echo "$ARN" | grep -q 'assumed-role'; then
   ROLE=$(echo "$ARN" | awk -F/ '{print $2}')
   USER=$(echo "$ARN" | awk -F/ '{print $3}')

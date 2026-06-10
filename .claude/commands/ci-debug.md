@@ -1,5 +1,6 @@
 ---
 description: Diagnose a failing CI/CD pipeline build. Parses build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines to identify root cause, suggest fixes, and flag patterns. Read-only analysis.
+argument-hint: "LOG_SOURCE=text|file:<path>|url:<url> [CI_SYSTEM=auto] [REPO_PATH=...]"
 ---
 
 # /ci-debug — CI/CD Pipeline Failure Diagnosis

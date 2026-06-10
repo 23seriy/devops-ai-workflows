@@ -1,5 +1,6 @@
 ---
 description: Guided first 15 minutes of a production incident. Establishes timeline, assesses blast radius, gathers evidence, and coordinates response. Read-only investigation commands.
+argument-hint: "INCIDENT=\"<symptoms>\" [ENVIRONMENT=prod] [AFFECTED_SERVICE=...]"
 ---
 
 # /incident-triage — First 15 Minutes of an Incident

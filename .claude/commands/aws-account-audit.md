@@ -1,5 +1,6 @@
 ---
 description: Read-only AWS account hygiene and security audit. Scans IAM, S3, EC2, RDS, CloudTrail, encryption, and more. Generates a markdown report with findings ranked by severity.
+argument-hint: "[PROFILE=...] [REGION=...] [ALL_REGIONS=yes|no] [FAST=yes|no]"
 ---
 
 # /aws-account-audit — AWS Account Security & Hygiene Audit
