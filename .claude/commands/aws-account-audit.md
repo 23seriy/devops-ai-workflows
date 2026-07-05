@@ -324,7 +324,7 @@ Flag:
 
 Compile all findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/aws-account-audit-<account-id>-<region>-<YYYYMMDD-HHMMSS>.md
 ```
 
@@ -359,6 +359,7 @@ $REPORT_DIR/aws-account-audit-<account-id>-<region>-<YYYYMMDD-HHMMSS>.md
 ```
 
 Present the user with:
+
 1. Path to the saved report.
 2. Verdict (🟢 / 🟡 / 🔴).
 3. Top 3–5 recommended actions.

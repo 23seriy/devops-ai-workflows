@@ -179,7 +179,7 @@ RUN npm run build
 
 Compile findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/dockerfile-review-<YYYYMMDD-HHMMSS>.md
 ```
 

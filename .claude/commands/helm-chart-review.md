@@ -72,6 +72,7 @@ resources:
 ```
 
 Flag:
+
 - Containers with no `resources.requests` → scheduling problems, noisy neighbors.
 - Containers with no `resources.limits` → can consume unbounded resources.
 - Memory limits much larger than requests → overcommitment risk.
@@ -86,6 +87,7 @@ startupProbe: ...     # Grace period for slow-starting apps
 ```
 
 Flag:
+
 - No `readinessProbe` → traffic sent before app is ready.
 - No `livenessProbe` → stuck pods never restart.
 - `livenessProbe` same as `readinessProbe` → may cause restart loops under load.
@@ -111,6 +113,7 @@ securityContext:
 ```
 
 Flag:
+
 - No `securityContext` at all → runs as root.
 - `privileged: true` → full host access.
 - `allowPrivilegeEscalation: true` or missing → container can escalate.
@@ -141,6 +144,7 @@ If the chart creates `ClusterRole`, `ClusterRoleBinding`, `Role`, `RoleBinding`:
 ### Replicas and PDB
 
 Flag:
+
 - `replicas: 1` for production workloads → single point of failure.
 - No `PodDisruptionBudget` for multi-replica Deployments/StatefulSets.
 - PDB with `maxUnavailable: 0` → blocks all voluntary disruptions (node drain).
@@ -164,6 +168,7 @@ affinity:
 ```
 
 Flag:
+
 - Multi-replica workloads with no anti-affinity → all pods on one node.
 - `requiredDuringScheduling` anti-affinity on small clusters → pods may not schedule.
 
@@ -211,7 +216,7 @@ Review `values.yaml`:
 
 Compile findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/helm-chart-review-<chart-name>-<YYYYMMDD-HHMMSS>.md
 ```
 

@@ -65,6 +65,7 @@ If the input is text output, the agent should parse it directly.
 If the input is already JSON, load it directly.
 
 Identify:
+
 - Total resources changing.
 - Actions: `create`, `update`, `delete`, `replace` (delete+create), `read`.
 - Provider and resource types.
@@ -142,6 +143,7 @@ Count and categorize:
 ```
 
 Flag:
+
 - More than 20 resources changing → **large blast radius**.
 - More than 5 deletes → **high risk**.
 - Any deletes of stateful resources → **data loss risk**.
@@ -173,6 +175,7 @@ Check for:
 ## Step 6 — Provider-specific checks
 
 ### AWS
+
 - `aws_security_group_rule` / `aws_vpc_security_group_ingress_rule` opening to `0.0.0.0/0`.
 - `aws_iam_policy` / `aws_iam_role_policy` with `*` actions or resources.
 - `aws_s3_bucket` public access changes.
@@ -181,11 +184,13 @@ Check for:
 - `aws_launch_template` changes (may trigger rolling updates).
 
 ### Kubernetes / Helm
+
 - `kubernetes_namespace` deletion (cascades all resources).
 - `helm_release` chart version changes.
 - `kubernetes_config_map` / `kubernetes_secret` changes (may trigger pod restarts).
 
 ### General
+
 - `null_resource` / `local_exec` provisioners (arbitrary code execution).
 - `random_*` resource recreation (may cascade to dependent resources).
 
@@ -195,7 +200,7 @@ Check for:
 
 Compile findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/terraform-plan-review-<YYYYMMDD-HHMMSS>.md
 ```
 
@@ -240,6 +245,7 @@ $REPORT_DIR/terraform-plan-review-<YYYYMMDD-HHMMSS>.md
 ```
 
 Present the user with:
+
 1. Path to the saved report.
 2. Risk verdict (🔴 / 🟡 / 🟢).
 3. Whether it's safe to apply.

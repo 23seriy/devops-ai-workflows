@@ -109,7 +109,7 @@ For each collected policy document, the agent should check for the following pat
 
 ### Admin-equivalent access
 
-```
+```text
 Effect: Allow, Action: "*", Resource: "*"
 Effect: Allow, Action: "iam:*", Resource: "*"
 Effect: Allow, Action: ["s3:*", "ec2:*", ...many services...], Resource: "*"
@@ -120,7 +120,7 @@ Effect: Allow, Action: ["s3:*", "ec2:*", ...many services...], Resource: "*"
 The following action combinations allow a principal to escalate its own or others' privileges:
 
 | Escalation vector | Actions needed |
-|---|---|
+| --- | --- |
 | Create new policy version | `iam:CreatePolicyVersion` |
 | Set default policy version | `iam:SetDefaultPolicyVersion` |
 | Create access key for another user | `iam:CreateAccessKey` on `Resource: *` |
@@ -137,7 +137,7 @@ The following action combinations allow a principal to escalate its own or other
 
 ### Wildcard resources
 
-```
+```text
 Resource: "*" combined with sensitive actions (iam:*, s3:Delete*, ec2:Terminate*, rds:Delete*, kms:Decrypt)
 ```
 
@@ -152,7 +152,7 @@ Flag `Allow` statements without `Condition` blocks for:
 
 ### Overly broad NotAction / NotResource
 
-```
+```text
 Effect: Allow, NotAction: [<small deny list>]  → allows everything else
 Effect: Allow, NotResource: [<small list>]      → allows all other resources
 ```
@@ -252,7 +252,7 @@ Flag:
 
 Compile all findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/aws-iam-policy-review-<principal-or-policy-name>-<YYYYMMDD-HHMMSS>.md
 ```
 
@@ -293,6 +293,7 @@ $REPORT_DIR/aws-iam-policy-review-<principal-or-policy-name>-<YYYYMMDD-HHMMSS>.m
 ```
 
 Present the user with:
+
 1. Path to the saved report.
 2. Risk verdict (🟢 / 🟡 / 🔴).
 3. Top findings and recommended fixes.

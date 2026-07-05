@@ -33,11 +33,11 @@ Diagnose why a CI/CD build is failing. Feed in build logs (pasted, file, or URL)
 Parse the log and detect the CI system from markers:
 
 | CI System | Detection markers |
-|---|---|
+| --- | --- |
 | Jenkins | `[Pipeline]`, `Started by`, `Running on`, `[INFO]`, `BUILD FAILURE`, `Finished: FAILURE` |
-| GitHub Actions | `::error::`, `##[error]`, `Run `, `with:`, `GITHUB_`, `workflow` |
-| GitLab CI | `$ `, `Running with gitlab-runner`, `Job succeeded`, `ERROR: Job failed` |
-| Bitbucket | `+ `, `Pipelines`, `bitbucket-pipelines.yml`, `Build teardown` |
+| GitHub Actions | `::error::`, `##[error]`, `Run`, `with:`, `GITHUB_`, `workflow` |
+| GitLab CI | `$`, `Running with gitlab-runner`, `Job succeeded`, `ERROR: Job failed` |
+| Bitbucket | `+`, `Pipelines`, `bitbucket-pipelines.yml`, `Build teardown` |
 
 ---
 
@@ -61,7 +61,7 @@ Scan the log for:
 Determine which build stage failed:
 
 | Stage | Common patterns |
-|---|---|
+| --- | --- |
 | Checkout / clone | `git`, `clone`, `fetch`, `checkout`, `LFS` |
 | Dependency install | `npm install`, `pip install`, `go mod`, `maven`, `gradle`, `bundle install`, `yarn` |
 | Compile / build | `tsc`, `go build`, `javac`, `gcc`, `webpack`, `docker build` |
@@ -81,17 +81,20 @@ Determine which build stage failed:
 Classify the failure into one of these categories:
 
 ### Code errors
+
 - **Compilation error** — syntax errors, type errors, missing imports.
 - **Test failure** — assertion failures, test timeouts, flaky tests.
 - **Lint failure** — style violations, formatting issues.
 
 ### Dependency errors
+
 - **Missing dependency** — package not found, version conflict.
 - **Registry unavailable** — npm registry, PyPI, Maven Central down or unreachable.
 - **Version conflict** — incompatible dependency versions, lockfile mismatch.
 - **Vulnerability gate** — Snyk, npm audit, or similar blocking on CVEs.
 
 ### Infrastructure errors
+
 - **Docker build failure** — Dockerfile errors, base image issues, layer cache problems.
 - **Resource exhaustion** — OOM, disk full, too many open files.
 - **Timeout** — build exceeded time limit.
@@ -99,6 +102,7 @@ Classify the failure into one of these categories:
 - **Permissions** — missing credentials, expired tokens, insufficient IAM.
 
 ### Configuration errors
+
 - **CI config syntax** — invalid YAML, missing required fields.
 - **Environment variable** — missing or incorrect env vars.
 - **Secret** — missing secret, expired credential.
@@ -106,6 +110,7 @@ Classify the failure into one of these categories:
 - **Branch/trigger** — wrong branch filter, missing trigger condition.
 
 ### Flaky / intermittent
+
 - **Flaky test** — test passes sometimes, fails sometimes.
 - **Race condition** — timing-dependent failures.
 - **External service** — third-party API intermittently unavailable.
@@ -116,7 +121,7 @@ Classify the failure into one of these categories:
 
 If the CI system is Jenkins, perform additional checks:
 
-```
+```text
 Check for:
 - Shared library errors (@Library load failures, method not found)
 - Agent/node issues (offline, label mismatch, workspace conflicts)
@@ -132,7 +137,7 @@ Check for:
 
 For Jenkins pipelines using `itc-jenkins-shared-libraries` patterns:
 
-```
+```text
 Check for:
 - BRANCH_CONFIG.BUILD_SEED branch resolution
 - repoData lookup failures (projectName not found in repositories_v2.json)
@@ -147,7 +152,7 @@ Check for:
 
 ## Step 5 — GitHub Actions-specific analysis (if CI_SYSTEM=github-actions)
 
-```
+```text
 Check for:
 - Workflow syntax errors
 - Action version pinning issues (using @main vs @v4)
@@ -164,7 +169,7 @@ Check for:
 
 ## Step 5b — Bitbucket Pipelines-specific analysis (if CI_SYSTEM=bitbucket)
 
-```
+```text
 Check for:
 - Pipeline YAML syntax errors (bitbucket-pipelines.yml)
 - Step script failures (+ prefix lines showing executed commands)
@@ -182,6 +187,7 @@ Check for:
 ```
 
 For Bitbucket-specific patterns, also check:
+
 - `BB_AUTH_TOKEN` / `BITBUCKET_*` variable availability
 - Pipe version pinning (using `x.y.z` vs `latest`)
 - `after-script` block for cleanup on failure
@@ -211,7 +217,7 @@ For each identified issue, provide:
 Common fix patterns:
 
 | Issue | Fix |
-|---|---|
+| --- | --- |
 | npm install fails | Clear cache, delete `node_modules` + `package-lock.json`, re-install |
 | Docker build OOM | Increase builder memory, reduce parallel builds, use multi-stage |
 | Test timeout | Increase timeout, check for deadlocks, add test isolation |
@@ -227,7 +233,7 @@ Common fix patterns:
 
 Compile findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/ci-debug-<ci-system>-<YYYYMMDD-HHMMSS>.md
 ```
 
