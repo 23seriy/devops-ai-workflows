@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-07-04
+
 ### Added — Claude Code
 - **`argument-hint`** frontmatter on every workflow — shows expected args inline in the slash-command picker
 - **`.claude/settings.json`** — shared project permissions: read-only bash allowlist + cluster/cloud-mutation denylist that enforces the repo's read-only contract at the tool layer
@@ -14,6 +16,9 @@ All notable changes to this project will be documented in this file.
 - Removed bogus `auto_execution_mode: 2` frontmatter from `/k8s-upgrade-readiness` (left over from another editor)
 - `scripts/stale-branches.sh` no longer silently fails to skip the `main`/`master` branches (precedence bug in `||` + `&&` chain)
 - `scripts/*.sh` are now shellcheck-clean (argument flags converted to bash arrays, `read -r` used everywhere)
+- Markdownlint CI step now fails the build (removed `continue-on-error: true`)
+- Removed stale `/repo-health` roadmap TODO from README (shipped in v1.1.0)
+- `settings.local.json` removed from git tracking (machine-local permissions should not be shared)
 
 ### Improved
 - **`scripts/validate-repo.sh`** — checks for `description` + `argument-hint` in every workflow, validates `.claude/settings.json` parses, validates subagent frontmatter
