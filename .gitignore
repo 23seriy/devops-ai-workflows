@@ -17,3 +17,4 @@ k8s-debug-reports/
 *.key
 kubeconfig*
 !kubeconfig.example
+.serena*
