@@ -186,7 +186,6 @@ Ideas I plan to add (PRs welcome):
 
 **Security & repo hygiene**
 - [ ] `/cve-impact-assessment` — given a CVE, check whether your stack is affected
-- [ ] `/repo-health` — README, license, CI, branch protection, stale branches
 - [ ] `/dependency-upgrade-plan` — group outdated deps by risk and suggest batching
 
 ## Contributing
