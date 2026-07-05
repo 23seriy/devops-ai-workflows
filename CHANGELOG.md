@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- `/k8s-storage-debug` — read-only Kubernetes storage stack debugger: pod → PVC → PV → StorageClass → CSI driver → node disk pressure, with severity-ranked markdown report
+
 ## [1.2.0] — 2026-07-04
 
 ### Added — Claude Code
