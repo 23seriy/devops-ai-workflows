@@ -19,5 +19,5 @@ kubeconfig*
 !kubeconfig.example
 .serena*
 
-# Local machine overrides (not for all users)
-*.local.*
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json
