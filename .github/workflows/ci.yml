@@ -37,7 +37,6 @@ jobs:
         with:
           globs: '**/*.md'
           config: '.github/.markdownlint.json'
-        continue-on-error: true
 
   shellcheck:
     name: Shellcheck
