@@ -250,7 +250,7 @@ After writing, print the report path and the top three critical findings with su
 - **FailedAttachVolume** → CSI controller logs, PV node affinity vs pod's actual node (Steps 4 & 6).
 - **DiskPressure** → `kubectl describe node <node>`, check kubelet ephemeral-storage threshold.
 - **ReadWriteOnce multi-node conflict** → PVC access mode vs Deployment replica count and node spread.
-- **PV Released** → reclaim policy is `Retain`; requires manual `kubectl delete pv` after verifying data is safe.
+- **PV Released** → reclaim policy is `Retain`; after verifying data is safe, a cluster admin must run `kubectl delete pv <name>` outside this workflow to release the volume.
 
 ---
 
