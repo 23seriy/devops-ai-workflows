@@ -115,7 +115,7 @@ git log --all --name-only --diff-filter=A 2>/dev/null | grep -iE '\.(pem|key|p12
 For each finding, classify:
 
 | Severity | Pattern | Action |
-|---|---|---|
+| --- | --- | --- |
 | 🔴 Critical | AWS access key (`AKIA*`), private key, GCP service account JSON, GitHub PAT (`ghp_*`), Slack token (`xox*`) | Rotate immediately. Check if key is still active. |
 | 🔴 Critical | Database connection string with credentials | Rotate password. Check if DB is exposed. |
 | 🟡 Warning | Generic `password=`, `secret=`, `token=` in config files | May be placeholder/test value — verify if real. |
@@ -166,7 +166,7 @@ done
 
 Compile findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/secrets-leak-scan-<repo-name>-<YYYYMMDD-HHMMSS>.md
 ```
 

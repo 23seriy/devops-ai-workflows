@@ -37,6 +37,7 @@ find . -maxdepth 2 -type f | sed 's#^./##' | sort | head -100
 ```
 
 Flag:
+
 - No remote configured.
 - Dirty working tree when preparing release/PR.
 - Missing standard files: README, LICENSE, CHANGELOG, CONTRIBUTING, CODEOWNERS.
@@ -57,6 +58,7 @@ grep -nE '^##? (Overview|Quick start|Usage|Development|Testing|Deployment|Config
 ```
 
 Flag:
+
 - README without quick start, usage, testing, or deployment instructions.
 - No ownership file for review routing.
 - CHANGELOG absent for reusable tools/libraries.
@@ -76,6 +78,7 @@ find . -maxdepth 3 -type f \( -name '.pre-commit-config.yaml' -o -name '.editorc
 ```
 
 Flag:
+
 - No CI workflow/pipeline.
 - No dependency update automation (`renovate`/`dependabot`).
 - No formatting/lint configuration for active languages.
@@ -117,6 +120,7 @@ git tag --sort=-creatordate | head -20
 ```
 
 Flag:
+
 - Many stale branches older than `STALE_DAYS`.
 - No tags/releases for production software.
 - No clear branching strategy documented.
@@ -127,7 +131,7 @@ Flag:
 
 Write:
 
-```
+```text
 $REPORT_DIR/repo-health-<repo-name>-<YYYYMMDD-HHMMSS>.md
 ```
 

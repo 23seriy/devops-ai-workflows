@@ -46,9 +46,11 @@ Do not use this when:
 ```
 
 Expected result:
+
 - <what healthy looks like>
 
 If bad:
+
 - <what to do next>
 
 ### Step 2 — Identify likely root cause
@@ -62,16 +64,18 @@ If bad:
 > Do not execute mitigations automatically. Confirm environment and impact first.
 
 | Option | When to use | Command | Risk | Rollback |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Rollback | Bad deploy suspected | `<command>` | <risk> | <rollback> |
 | Scale up | Load/resource pressure | `<command>` | <risk> | <rollback> |
 
 ## Escalation
 
 Escalate when:
+
 - <condition>
 
 Escalate to:
+
 - <team/person/channel>
 
 ## Post-incident follow-up
@@ -79,7 +83,8 @@ Escalate to:
 - [ ] Update this runbook with new findings
 - [ ] Add/adjust alert if detection was slow
 - [ ] Add test/guardrail if prevention was possible
-```
+
+```text
 
 ### Rules
 

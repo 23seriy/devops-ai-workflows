@@ -51,7 +51,7 @@ aws cloudformation describe-stack-events --stack-name <stack> --query 'StackEven
 
 ### Draft initial status
 
-```
+```text
 🔴 Incident declared: <title>
 Time: <HH:MM UTC>
 Severity: <SEV1/SEV2/SEV3>
@@ -100,7 +100,7 @@ aws cloudwatch get-metric-statistics \
 ### Quantify impact
 
 | Question | How to determine |
-|---|---|
+| --- | --- |
 | Error rate | Prometheus, CloudWatch, APM |
 | Affected users (%) | Compare error rate to total request rate |
 | Which regions/AZs | Check per-region metrics, node distribution |
@@ -166,7 +166,7 @@ curl -sSm 5 -o /dev/null -w "status=%{http_code} time=%{time_total}s\n" https://
 ### Common root causes and quick mitigations
 
 | Symptom | Likely cause | Quick mitigation |
-|---|---|---|
+| --- | --- | --- |
 | Pods in CrashLoopBackOff after deploy | Bad code / config in new version | `kubectl rollout undo deploy/<name> -n <ns>` |
 | All pods OOMKilled | Memory leak or insufficient limits | Scale up or increase memory limits |
 | 503s from LB | No healthy targets | Check pod readiness, fix probes |
@@ -179,7 +179,7 @@ curl -sSm 5 -o /dev/null -w "status=%{http_code} time=%{time_total}s\n" https://
 
 The agent should present mitigation options but **never execute them automatically**:
 
-```
+```text
 Suggested mitigations (choose one — confirm before running):
 
 Option A: Rollback to previous version
@@ -201,7 +201,7 @@ Option D: Disable traffic to the service
 
 ### Status update
 
-```
+```text
 🟡 Update: <title>
 Time: <HH:MM UTC>
 Status: Identified / Mitigating
@@ -241,7 +241,7 @@ Record everything gathered so far:
 
 Compile all findings into a timestamped report:
 
-```
+```text
 $REPORT_DIR/incident-triage-<service>-<YYYYMMDD-HHMMSS>.md
 ```
 

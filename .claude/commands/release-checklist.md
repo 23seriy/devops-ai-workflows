@@ -35,7 +35,7 @@ Gather:
 Classify risk:
 
 | Risk | Criteria |
-|---|---|
+| --- | --- |
 | Low | Backward-compatible, tested, easy rollback, small blast radius |
 | Medium | Config/IaC changes, multiple services, partial rollback complexity |
 | High | Data migration, IAM/networking, irreversible changes, production-wide impact |
@@ -75,7 +75,7 @@ kubectl diff -f /tmp/rendered.yaml --server-side 2>/dev/null || true
 Document:
 
 | Item | Value |
-|---|---|
+| --- | --- |
 | Must deploy before | <repos/services/infra> |
 | Must deploy after | <repos/services/infra> |
 | Can deploy independently | yes/no |
@@ -97,7 +97,7 @@ Common ordering rules:
 Every release needs a rollback plan:
 
 | Area | Rollback approach | Time estimate | Risk |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | App | redeploy previous image/tag | <time> | <risk> |
 | Helm | `helm rollback` or GitOps revert | <time> | <risk> |
 | Terraform | revert code + apply plan | <time> | <risk> |
@@ -124,7 +124,7 @@ Before release:
 Example release watchlist:
 
 | Signal | Healthy | Abort threshold |
-|---|---|---|
+| --- | --- | --- |
 | Error rate | <1% | >5% for 5 min |
 | p95 latency | <baseline + 20% | >baseline + 50% |
 | Pod restarts | 0–1 expected | repeated CrashLoopBackOff |
@@ -136,7 +136,7 @@ Example release watchlist:
 
 Write:
 
-```
+```text
 $REPORT_DIR/release-checklist-<release-name>-<YYYYMMDD-HHMMSS>.md
 ```
 

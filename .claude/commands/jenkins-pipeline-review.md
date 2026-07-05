@@ -41,6 +41,7 @@ ls -la ${PIPELINE_PATH:-.}/resources/ 2>/dev/null || echo "No resources/ directo
 ```
 
 Identify:
+
 - Pipeline type (declarative vs scripted vs shared library).
 - File count and structure.
 - Entry points vs helper classes.
@@ -54,7 +55,7 @@ Identify:
 Flag these patterns:
 
 | Pattern | Severity | Issue |
-|---|---|---|
+| --- | --- | --- |
 | Hardcoded passwords/tokens in source | 🔴 | `password = "..."`, `token = "..."`, `SECRET_KEY = "..."` |
 | `echo` / `println` of credential variables | 🔴 | Leaks secrets to console log |
 | Credentials used outside `withCredentials` block | 🔴 | Secret may persist in env or workspace |
@@ -68,7 +69,7 @@ Flag these patterns:
 ### Script approval and sandbox escape
 
 | Pattern | Severity | Issue |
-|---|---|---|
+| --- | --- | --- |
 | `@NonCPS` methods accessing Jenkins internals | 🟡 | May bypass sandbox; review what it accesses |
 | `@Grab` annotations | 🔴 | Downloads arbitrary JARs at runtime |
 | `evaluate()` / `Eval.me()` | 🔴 | Arbitrary code execution |
@@ -79,7 +80,7 @@ Flag these patterns:
 ### Agent and workspace security
 
 | Pattern | Severity | Issue |
-|---|---|---|
+| --- | --- | --- |
 | `agent any` without node restriction | 🟡 | Build runs on any node — may expose secrets to untrusted agents |
 | No workspace cleanup (`cleanWs()` or `deleteDir()`) | 🟡 | Secrets/artifacts may persist between builds |
 | `stash`/`unstash` of sensitive files across nodes | 🟡 | Stashed content stored on controller |
@@ -91,7 +92,7 @@ Flag these patterns:
 ### Missing error handling
 
 | Pattern | Severity | Issue |
-|---|---|---|
+| --- | --- | --- |
 | No `post { failure { ... } }` block | 🟡 | No notification or cleanup on failure |
 | No `post { always { ... } }` block | 🟡 | Resources not cleaned up (containers, temp files) |
 | `try/catch` that swallows exceptions silently | 🔴 | `catch (e) { }` — hides failures |
@@ -103,7 +104,7 @@ Flag these patterns:
 ### Pipeline durability
 
 | Pattern | Severity | Issue |
-|---|---|---|
+| --- | --- | --- |
 | Very long pipeline (>500 lines in one file) | 🟡 | Hard to maintain; extract into shared library |
 | Nested `parallel` blocks | 🟡 | Can cause serialization issues in CPS |
 | Heavy computation in CPS-transformed code | 🟡 | Move to `@NonCPS` methods or external scripts |
@@ -117,7 +118,7 @@ Flag these patterns:
 ### Declarative pipeline
 
 | Check | Expected |
-|---|---|
+| --- | --- |
 | `agent` block present | ✅ at top level or per-stage |
 | `stages` block with named stages | ✅ meaningful names, not "Stage 1" |
 | `environment` block for shared env vars | ✅ not scattered `withEnv` blocks |
@@ -130,7 +131,7 @@ Flag these patterns:
 ### Shared library patterns
 
 | Check | Expected |
-|---|---|
+| --- | --- |
 | `call()` method in `vars/*.groovy` | ✅ entry point for each pipeline |
 | `@Library('name') _` import with version | ✅ pin to a tag/branch, not `@Library('name')` |
 | Clean separation: vars/ (entry) → src/ (logic) | ✅ vars should be thin wrappers |
@@ -140,7 +141,7 @@ Flag these patterns:
 ### Resource management
 
 | Pattern | Severity | Issue |
-|---|---|---|
+| --- | --- | --- |
 | Docker containers started but not cleaned up | 🟡 | Use `docker.image().inside { }` or explicit cleanup |
 | `withDockerContainer` without resource limits | 🔵 | Consider `--memory`, `--cpus` |
 | Workspace accumulation (no `cleanWs()`) | 🟡 | Disk fills up over time |
@@ -156,7 +157,7 @@ If `BUILD_CONFIG_PATH` is provided (e.g., `repositories_v2.json`), cross-referen
 ### `repositories_v2.json` checks
 
 | Check | What to flag |
-|---|---|
+| --- | --- |
 | `kind` matches pipeline type | `nodejs-service` → `servicePipeline.groovy`, `nodejs-lambda` → `lambdaPipeline.groovy`, etc. |
 | `runtime_version` is current | Flag EOL versions: Node 14, 16, 18; Python 3.7, 3.8; Go <1.21 |
 | `staticscans.sonarqube` / `snyk` enabled | Flag repos with scans disabled without a snooze date |
@@ -169,7 +170,7 @@ If `BUILD_CONFIG_PATH` is provided (e.g., `repositories_v2.json`), cross-referen
 ### BRANCH_CONFIG checks
 
 | Check | What to flag |
-|---|---|
+| --- | --- |
 | `BUILD_SEED` points to a real branch | `master` for production, feature branch for testing |
 | `BUILD_TOOLS` points to a real branch | Same |
 | Mismatch between pipeline and build-seed | Pipeline expects files that don't exist in the referenced build-seed branch |
@@ -179,7 +180,7 @@ If `BUILD_CONFIG_PATH` is provided (e.g., `repositories_v2.json`), cross-referen
 ## Step 6 — Performance and optimization
 
 | Pattern | Severity | Suggestion |
-|---|---|---|
+| --- | --- | --- |
 | Sequential stages that could run in parallel | 🔵 | Lint + unit test + security scan can often parallelize |
 | `git clone` of entire repo history | 🔵 | Use `checkout([$class: 'GitSCM', extensions: [[$class: 'CloneOption', depth: 1, shallow: true]]])` |
 | Docker build without layer caching | 🔵 | Use `--cache-from` or BuildKit cache mounts |
@@ -197,7 +198,7 @@ If `BUILD_CONFIG_PATH` is provided (e.g., `repositories_v2.json`), cross-referen
 Jenkins pipelines are CPS-transformed, which introduces subtle bugs:
 
 | Issue | Example | Fix |
-|---|---|---|
+| --- | --- | --- |
 | Non-serializable variables in pipeline body | `def matcher = (text =~ /pattern/)` | Move to `@NonCPS` method or use `==~` |
 | Closure serialization | `list.collect { ... }` in pipeline context | Use `@NonCPS` or `for` loop |
 | `java.io.NotSerializableException` | Any non-serializable object crossing a CPS boundary | Extract to `@NonCPS` or convert to String/Map |
@@ -206,7 +207,7 @@ Jenkins pipelines are CPS-transformed, which introduces subtle bugs:
 ### Multibranch and organization folder
 
 | Check | What to flag |
-|---|---|
+| --- | --- |
 | Jenkinsfile path hardcoded vs convention | Should match Jenkins job config (usually `Jenkinsfile` at root) |
 | Branch indexing triggers too broad | Builds triggered on irrelevant branches |
 | No Jenkinsfile in default branch | Multibranch won't discover the project |
@@ -215,7 +216,7 @@ Jenkins pipelines are CPS-transformed, which introduces subtle bugs:
 ### Plugin compatibility
 
 | Check | What to flag |
-|---|---|
+| --- | --- |
 | Use of deprecated pipeline steps | `dockerFingerprintFrom`, old `build` syntax |
 | Pipeline Utility Steps assumed available | `readJSON`, `readYaml`, `writeJSON` need Pipeline Utility Steps plugin |
 | Git plugin version requirements | `checkout scm` behavior changes across versions |
@@ -227,7 +228,7 @@ Jenkins pipelines are CPS-transformed, which introduces subtle bugs:
 
 Compile findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/jenkins-pipeline-review-<YYYYMMDD-HHMMSS>.md
 ```
 

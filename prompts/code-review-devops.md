@@ -69,7 +69,7 @@ Apply these checks in order of priority:
 
 For each finding:
 
-```
+```text
 **[🔴/🟡/🔵] <Title>**
 File: `<path>:<line>`
 Issue: <what's wrong>
@@ -79,7 +79,7 @@ Why: <1 sentence on why this matters>
 
 ### End with a summary
 
-```
+```text
 ## Summary
 - 🔴 Critical: <count>
 - 🟡 Warning: <count>

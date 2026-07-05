@@ -7,7 +7,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 ## What's inside
 
 | Folder | Purpose | Audience |
-|---|---|---|
+| --- | --- | --- |
 | [`.claude/commands/`](./.claude/commands) | Workflow definitions, auto-discovered as slash commands by Claude Code. | Everyone |
 | [`.claude/agents/`](./.claude/agents) | Repo-maintenance subagents (e.g. `workflow-author`) invoked via the `Agent` tool. | Maintainers |
 | [`.claude/settings.json`](./.claude/settings.json) | Shared project settings: pre-approved read-only `Bash(...)` patterns + a deny list that blocks cluster/cloud mutations even if a workflow tries. | Claude Code users |
@@ -20,7 +20,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 ### Kubernetes
 
 | Workflow | Slash command | Description | Prerequisites |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [k8s-debug](./.claude/commands/k8s-debug.md) | `/k8s-debug` | General-purpose, read-only cluster diagnostics across nodes, pods, workloads, networking, storage, RBAC, events, and resource pressure. | `kubectl`. Optional: `jq`, metrics-server. |
 | [k8s-workload-debug](./.claude/commands/k8s-workload-debug.md) | `/k8s-workload-debug` | Deep-dive on a single Deployment / StatefulSet / DaemonSet / Job / Pod: rollout, spec, probes, resources, logs, networking, storage, config. | `kubectl`. Optional: `jq`, metrics-server. |
 | [k8s-rbac-audit](./.claude/commands/k8s-rbac-audit.md) | `/k8s-rbac-audit` | RBAC risk audit — wildcards, cluster-admin bindings, risky verb/resource combos, over-privileged ServiceAccounts, anonymous access. | `kubectl`, `jq`. Optional: `kubectl-who-can`. |
@@ -32,7 +32,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 ### AWS / Cloud
 
 | Workflow | Slash command | Description | Prerequisites |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [aws-account-audit](./.claude/commands/aws-account-audit.md) | `/aws-account-audit` | Read-only AWS account security & hygiene audit: IAM, S3, EC2, RDS, CloudTrail, encryption, GuardDuty, SecurityHub. | `aws` CLI. Optional: `jq`. |
 | [aws-cost-quickscan](./.claude/commands/aws-cost-quickscan.md) | `/aws-cost-quickscan` | Find AWS cost waste: idle EC2/RDS, unattached EBS, old snapshots, expensive log groups, NAT data processing, missing Savings Plans. | `aws` CLI, Cost Explorer enabled. Optional: `jq`. |
 | [aws-vpc-debug](./.claude/commands/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
@@ -41,13 +41,13 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 ### IaC
 
 | Workflow | Slash command | Description | Prerequisites |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [terraform-plan-review](./.claude/commands/terraform-plan-review.md) | `/terraform-plan-review` | Explain a Terraform plan and flag risky changes: destroys, replacements, security group mutations, IAM changes, blast radius. | `terraform plan` output. Optional: `terraform` CLI, `jq`. |
 
 ### Containers & CI/CD
 
 | Workflow | Slash command | Description | Prerequisites |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [ci-debug](./.claude/commands/ci-debug.md) | `/ci-debug` | Diagnose a failing CI/CD pipeline: parse build logs from Jenkins, GitHub Actions, GitLab CI, or Bitbucket Pipelines. Root cause analysis and fix suggestions. | Build log output. Optional: repo source, CI config file. |
 | [jenkins-pipeline-review](./.claude/commands/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
 | [release-checklist](./.claude/commands/release-checklist.md) | `/release-checklist` | Pre-release safety gate: scope, deploy order, rollback, tests, monitoring, and communication before production release. | PR/diff summary. Optional: test results, plans, diffs. |
@@ -56,14 +56,14 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 ### Security
 
 | Workflow | Slash command | Description | Prerequisites |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [secrets-leak-scan](./.claude/commands/secrets-leak-scan.md) | `/secrets-leak-scan` | Scan git repo history for leaked secrets: API keys, passwords, tokens, private keys. Uses gitleaks, trufflehog, or regex fallback. | Git repo. Optional: `gitleaks`, `trufflehog`. |
 | [repo-health](./.claude/commands/repo-health.md) | `/repo-health` | Audit repository hygiene: README, license, CI, branch/release hygiene, tracked secrets, ownership, and automation gaps. | Local git repo. Optional: `gh`, `jq`. |
 
 ### Observability & Incident
 
 | Workflow | Slash command | Description | Prerequisites |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [incident-triage](./.claude/commands/incident-triage.md) | `/incident-triage` | Guided first 15 minutes of a production incident: timeline, blast radius, evidence gathering, mitigation suggestions. | Access to affected environment. |
 
 More on the way — see [Roadmap](#roadmap).
@@ -73,7 +73,7 @@ More on the way — see [Roadmap](#roadmap).
 Reusable system prompts you can paste into any AI agent for common DevOps tasks:
 
 | Prompt | What it does |
-|---|---|
+| --- | --- |
 | [incident-commander](./prompts/incident-commander.md) | Puts the AI in incident-commander mode: timeline, blast radius, action tracking, status updates. |
 | [postmortem-writer](./prompts/postmortem-writer.md) | Generates a blameless post-mortem from incident notes: timeline, root cause, impact, action items. |
 | [code-review-devops](./prompts/code-review-devops.md) | Reviews IaC / pipeline / Docker / K8s code with a security-first DevOps lens. |
@@ -86,7 +86,7 @@ Reusable system prompts you can paste into any AI agent for common DevOps tasks:
 Reusable, agent-agnostic safety rule sets. Reference them from a project's `CLAUDE.md` (e.g. `@rules/kubernetes.md`), paste into a system prompt, or include as context:
 
 | Rule file | What it does |
-|---|---|
+| --- | --- |
 | [devops-agent.md](./rules/devops-agent.md) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context, GitOps awareness, multi-repo coordination. |
 | [terraform.md](./rules/terraform.md) | Terraform-specific: state safety, ForceNew attribute warnings, provider/module pinning, workspace safety, import workflow, `prevent_destroy` reminders. |
 | [kubernetes.md](./rules/kubernetes.md) | Kubernetes-specific: context verification, dry-run first, Helm safety, ArgoCD/GitOps awareness, secret handling, debugging approach, RBAC best practices. |
@@ -96,7 +96,7 @@ Reusable, agent-agnostic safety rule sets. Reference them from a project's `CLAU
 Standalone shell utilities referenced by workflows or useful on their own:
 
 | Script | Usage |
-|---|---|
+| --- | --- |
 | [k8s-snapshot.sh](./scripts/k8s-snapshot.sh) | `./k8s-snapshot.sh [namespace\|all] [output-dir]` — dump cluster state (nodes, pods, events, services, top) to a timestamped Markdown file. |
 | [aws-whoami.sh](./scripts/aws-whoami.sh) | `./aws-whoami.sh [profile]` — quick AWS identity check: caller, region, account alias, org, SSO role. |
 | [stale-branches.sh](./scripts/stale-branches.sh) | `./stale-branches.sh [days] [--remote]` — list git branches older than N days with last commit info. |
@@ -138,7 +138,7 @@ argument-hint: "REQUIRED=<value> [OPTIONAL=default]"
 
 ## Repo layout
 
-```
+```text
 devops-ai-workflows/
 ├── .claude/
 │   ├── commands/            # Workflow definitions (Claude Code slash commands)
@@ -157,36 +157,41 @@ devops-ai-workflows/
 
 Ideas I plan to add (PRs welcome):
 
-**AWS / cloud**
+### AWS / cloud
+
 - [ ] `/aws-eks-debug` — bridge EKS + Kubernetes: node groups, OIDC, add-ons, IAM roles for service accounts
 - [ ] `/aws-rds-health` — RDS/Aurora diagnostics: events, metrics, parameter groups, replication lag
 - [ ] `/aws-lambda-debug` — Lambda diagnostics: errors, throttles, DLQ, VPC/ENI, CloudWatch logs
 - [ ] `/aws-ecs-service-debug` — ECS/Fargate service rollout failures: task events, target group health, IAM roles
 
-**IaC**
+### IaC
+
 - [ ] `/terraform-state-debug` — diagnose locks, drift, orphans
 - [ ] `/iac-secrets-scan` — repo-wide hardcoded-secret sweep
 
-**Containers & CI/CD**
+### Containers & CI/CD
+
 - [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
 - [ ] `/github-actions-review` — security review of GitHub Actions workflow files
 
-**Observability & incident**
+### Observability & incident
+
 - [ ] `/prometheus-query-helper` — intent → PromQL with rationale
 - [ ] `/log-pattern-extract` — cluster repeated errors out of a log dump
 - [ ] `/postmortem` — blameless post-mortem from a transcript
 - [ ] `/runbook-from-incident` — turn a resolved incident into a reusable runbook
 
-**Networking / database**
+### Networking / database
+
 - [ ] `/dns-debug` — multi-resolver dig, propagation, DNSSEC
 - [ ] `/tls-cert-audit` — chain inspection, expiry, weak ciphers across a list of hosts
 - [ ] `/postgres-health` — bloat, long queries, replication lag, missing indexes
 - [ ] `/redis-health` — memory pressure, slow log, persistence config, eviction patterns
 - [ ] `/db-migration-review` — flag risky migration patterns
 
-**Security & repo hygiene**
+### Security & repo hygiene
+
 - [ ] `/cve-impact-assessment` — given a CVE, check whether your stack is affected
-- [ ] `/repo-health` — README, license, CI, branch protection, stale branches
 - [ ] `/dependency-upgrade-plan` — group outdated deps by risk and suggest batching
 
 ## Contributing

@@ -18,3 +18,6 @@ k8s-debug-reports/
 kubeconfig*
 !kubeconfig.example
 .serena*
+
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json

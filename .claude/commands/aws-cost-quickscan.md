@@ -308,6 +308,7 @@ done
 ```
 
 Flag:
+
 - Functions with >512 MB memory — likely over-provisioned.
 - Functions not modified in 90+ days — candidates for cleanup.
 - Deprecated runtimes (Python 3.8, Node.js 16, etc.).
@@ -349,6 +350,7 @@ done
 ```
 
 Flag:
+
 - EC2 instances with avg CPU < 5% — candidates for downsizing or termination.
 - RDS instances with avg CPU < 10% — candidates for smaller instance class.
 - Cross-reference with instance type to estimate savings from right-sizing.
@@ -386,7 +388,7 @@ Flag:
 
 Compile all findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/aws-cost-quickscan-<account-id>-<YYYYMMDD-HHMMSS>.md
 ```
 
@@ -421,6 +423,7 @@ $REPORT_DIR/aws-cost-quickscan-<account-id>-<YYYYMMDD-HHMMSS>.md
 ```
 
 Present the user with:
+
 1. Path to the saved report.
 2. Estimated total monthly waste.
 3. Top 5 recommended cost-saving actions.

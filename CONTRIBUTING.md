@@ -30,8 +30,10 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
    ```
 
    ## Step N — Generate report
+
    Write `./<name>-reports/<name>-<timestamp>.md` summarising findings.
-   ```
+
+   ```text
 
    Both `description` and `argument-hint` are required. `argument-hint` should mirror the Inputs section: required args first, optional in `[brackets]`, separated by spaces. Examples:
 

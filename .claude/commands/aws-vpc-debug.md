@@ -357,7 +357,7 @@ Flag:
 
 Based on all findings, the agent should produce a clear path analysis:
 
-```
+```text
 Source (instance/ENI/IP)
   → Source Security Group (egress)
   → Source NACL (outbound)
@@ -376,7 +376,7 @@ For each hop, indicate ✅ PASS or ❌ BLOCKED with the specific rule or reason.
 
 Compile all findings into a timestamped Markdown report:
 
-```
+```text
 $REPORT_DIR/aws-vpc-debug-<source>-<dest>-<port>-<YYYYMMDD-HHMMSS>.md
 ```
 

@@ -174,7 +174,7 @@ kubectl logs -n <ns> <pod> --all-containers --tail=$LOG_TAIL --timestamps 2>/dev
 Classify found errors by severity:
 
 | Severity | Patterns | Likely cause |
-|---|---|---|
+| --- | --- | --- |
 | 🔴 Fatal | `panic`, `fatal`, `SIGKILL`, `OOMKilled`, exit 137 | App crash, OOM, kernel kill |
 | 🔴 Auth/TLS | `x509`, `certificate`, `tls handshake`, `unauthorized`, `forbidden` | Expired cert, wrong CA, RBAC |
 | 🟡 Connectivity | `connection refused`, `no such host`, `dial tcp`, `i/o timeout`, `ECONNREFUSED` | Service down, DNS, network policy |
@@ -282,6 +282,7 @@ kubectl get --raw /apis/metrics.k8s.io/v1beta1 2>&1 | head -5
 ```
 
 Flag:
+
 - HPAs with `ScalingActive=False` — metrics API broken or metric not found.
 - HPAs at max replicas — workload may be under-provisioned.
 - Custom metrics API `ServiceUnavailable` — prometheus-adapter or similar is broken.
