@@ -39,6 +39,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [aws-vpc-debug](./.claude/commands/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
 | [aws-iam-policy-review](./.claude/commands/aws-iam-policy-review.md) | `/aws-iam-policy-review` | Explain an IAM policy and flag risks: admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions. | `aws` CLI. Optional: `jq`. |
 | [aws-eks-debug](./.claude/commands/aws-eks-debug.md) | `/aws-eks-debug` | Read-only EKS diagnostics: cluster health, node groups, OIDC/IRSA, add-ons, VPC CNI networking, control-plane logging, version skew, and IAM access. | `aws` CLI. Optional: `kubectl`, `jq`. |
+| [aws-rds-health](./.claude/commands/aws-rds-health.md) | `/aws-rds-health` | Read-only RDS/Aurora diagnostics: instance health, events, storage/I/O metrics, parameter groups, replication lag, backups, and security posture. | `aws` CLI. Optional: `jq`. |
 
 ### IaC
 
