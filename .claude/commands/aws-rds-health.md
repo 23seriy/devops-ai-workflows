@@ -102,6 +102,7 @@ aws rds describe-db-clusters --db-cluster-identifier "$DB_IDENTIFIER" --region "
 ```
 
 Flag:
+
 - `PubliclyAccessible: true` — database reachable from the internet.
 - `DeletionProtection: false` — database can be deleted without additional safeguard.
 - `StorageEncrypted: false` — data at rest not encrypted.
@@ -137,6 +138,7 @@ aws rds describe-events --source-identifier "$DB_IDENTIFIER" \
 ```
 
 Flag:
+
 - Any `failure` or `failover` events in the last 24h.
 - Recent `maintenance` events indicating an unplanned or unexpected maintenance window.
 - Repeated identical events (loop pattern — indicative of a persistent issue).
@@ -166,6 +168,7 @@ done
 ```
 
 Flag:
+
 - `FreeStorageSpace` below 20% of `AllocatedStorage` (storage pressure).
 - `CPUUtilization` sustained above 80%.
 - `DatabaseConnections` near `max_connections` parameter value (check in Step 5).
@@ -198,6 +201,7 @@ aws rds describe-db-instances --db-instance-identifier "$DB_IDENTIFIER" --region
 ```
 
 Flag:
+
 - Parameter group in `pending-reboot` state (configuration change not applied).
 - `rds.force_ssl` or `require_secure_transport` not enabled (unencrypted connections allowed).
 - `log_min_duration_statement` not set (no slow query logging — hard to diagnose performance issues).
@@ -237,6 +241,7 @@ aws rds describe-global-clusters --region "$REGION" \
 ```
 
 Flag:
+
 - Replica lag above 30 seconds (replication falling behind).
 - No read replicas for a production read-heavy workload (single point of failure for reads).
 - Aurora cluster with all members at `PromotionTier=1` (failover order not tuned).
@@ -270,6 +275,7 @@ aws backup list-protected-resources --region "$REGION" \
 ```
 
 Flag:
+
 - `BackupRetentionPeriod < 7` (less than a week of point-in-time recovery).
 - `BackupRetentionPeriod = 0` (automated backups disabled — cannot do PITR).
 - No manual snapshots (no out-of-cycle recovery point before risky operations).
@@ -301,6 +307,7 @@ aws rds describe-db-instances --db-instance-identifier "$DB_IDENTIFIER" --region
 ```
 
 Flag:
+
 - Security group inbound rule allows `0.0.0.0/0` on DB port (public access).
 - Security group allows DB port from entire VPC CIDR (overly broad).
 - CA certificate is `rds-ca-2019` (deprecated — should migrate to `rds-ca-rsa2048-g1` or newer).
@@ -327,6 +334,7 @@ aws rds describe-db-engine-versions --engine "$ENGINE" --engine-version "$VERSIO
 ```
 
 Flag:
+
 - Engine version with known CVEs or past end-of-life (check AWS RDS deprecation schedule).
 - Major version upgrade available and `AutoMinorVersionUpgrade: false` (manually managed).
 - No upgrade targets available (may already be on latest, or engine version lookup failed).
