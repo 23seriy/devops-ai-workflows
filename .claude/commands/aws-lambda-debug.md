@@ -82,6 +82,7 @@ FUNC_ARN=$(aws lambda get-function --function-name "$FUNCTION" --region "$REGION
 ```
 
 Flag:
+
 - `State` not `Active` (e.g., `Pending`, `Failed`, `Inactive`).
 - `LastUpdateStatus` is `Failed` (recent deployment failed).
 - `Timeout` at 15 minutes (maximum — likely misconfigured or function hangs).
@@ -158,6 +159,7 @@ aws cloudwatch get-metric-statistics \
 ```
 
 Flag:
+
 - Error rate above 1% of invocations (calculate: errors / invocations × 100).
 - Any throttles present (reserved or account-level concurrency limit hit).
 - p99 duration approaching the configured timeout (within 20%).
@@ -204,6 +206,7 @@ STREAM=$(aws logs describe-log-streams \
 ```
 
 Flag:
+
 - Log group missing (Lambda never invoked, or logging disabled via resource policy).
 - Log group retention not set (unbounded cost growth).
 - `Task timed out` — function consistently hitting timeout.
@@ -243,6 +246,7 @@ aws lambda get-function-event-invoke-config --function-name "$FUNCTION" --region
 ```
 
 Flag:
+
 - Async function with no DLQ and no `OnFailure` destination (failed events silently dropped).
 - DLQ has messages (failures are accumulating — requires investigation).
 - `MaximumRetryAttempts: 0` with no DLQ (zero retry tolerance but no failure capture).
@@ -270,6 +274,7 @@ aws lambda get-account-settings --region "$REGION" \
 ```
 
 Flag:
+
 - `ReservedConcurrentExecutions: 0` — function throttled to zero (intentional or misconfiguration).
 - No provisioned concurrency on a latency-sensitive function in a VPC (cold starts will be high).
 - Account unreserved concurrency pool exhausted (other functions being throttled).
@@ -307,6 +312,7 @@ fi
 ```
 
 Flag:
+
 - Function in VPC — cold starts will be higher; check provisioned concurrency if latency-sensitive.
 - Subnets with few available IPs (ENI allocation will fail, causing throttle-like errors).
 - Security group with no outbound rules (function cannot reach external services).
@@ -338,6 +344,7 @@ aws lambda list-event-source-mappings --function-name "$FUNCTION" --region "$REG
 ```
 
 Flag:
+
 - Event source mapping in `Disabled` or `Failed` state.
 - No `BisectBatchOnFunctionError` for Kinesis/DynamoDB sources (a single poison-pill message blocks the shard forever).
 - No `DestinationConfig.OnFailure` for stream-based triggers (failed records silently dropped after retries exhausted).
@@ -374,6 +381,7 @@ aws lambda list-versions-by-function --function-name "$FUNCTION" --region "$REGI
 ```
 
 Flag:
+
 - Deprecated runtime (security patches no longer applied by AWS).
 - No aliases in use (deployments directly targeting `$LATEST` — no canary/traffic-shifting capability).
 - Layer ARN pointing to an external account (supply chain risk — third-party layers can be updated without notice).
@@ -404,6 +412,7 @@ aws iam list-attached-role-policies --role-name "$ROLE_NAME" \
 ```
 
 Flag:
+
 - Role has `AdministratorAccess` or `PowerUserAccess` (massively over-privileged for a Lambda).
 - Role has full-access managed policies for individual services (S3, DynamoDB, etc.) rather than scoped resource-level permissions.
 - Role name shared across multiple functions (cannot scope permissions per function).
