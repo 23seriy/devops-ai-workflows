@@ -38,6 +38,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [aws-cost-quickscan](./.claude/commands/aws-cost-quickscan.md) | `/aws-cost-quickscan` | Find AWS cost waste: idle EC2/RDS, unattached EBS, old snapshots, expensive log groups, NAT data processing, missing Savings Plans. | `aws` CLI, Cost Explorer enabled. Optional: `jq`. |
 | [aws-vpc-debug](./.claude/commands/aws-vpc-debug.md) | `/aws-vpc-debug` | Diagnose VPC connectivity: trace path across SGs, NACLs, route tables, NAT/IGW/TGW, VPC endpoints, DNS, and flow logs. | `aws` CLI. Optional: `jq`, `dig`. |
 | [aws-iam-policy-review](./.claude/commands/aws-iam-policy-review.md) | `/aws-iam-policy-review` | Explain an IAM policy and flag risks: admin-equivalent access, privilege escalation paths, wildcard actions, missing conditions. | `aws` CLI. Optional: `jq`. |
+| [aws-eks-debug](./.claude/commands/aws-eks-debug.md) | `/aws-eks-debug` | Read-only EKS diagnostics: cluster health, node groups, OIDC/IRSA, add-ons, VPC CNI networking, control-plane logging, version skew, and IAM access. | `aws` CLI. Optional: `kubectl`, `jq`. |
 | [aws-lambda-debug](./.claude/commands/aws-lambda-debug.md) | `/aws-lambda-debug` | Read-only Lambda diagnostics: errors, throttles, duration percentiles, cold starts, DLQ, VPC/ENI, concurrency, event source mappings, layers, and IAM role. | `aws` CLI. Optional: `jq`. |
 
 ### IaC
