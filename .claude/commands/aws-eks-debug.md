@@ -62,6 +62,7 @@ aws eks describe-cluster --name "$CLUSTER" --region "$REGION" --output json 2>/d
 ```
 
 Flag:
+
 - Cluster status not `ACTIVE`.
 - Public endpoint access enabled with `0.0.0.0/0` CIDR (no IP allowlist).
 - All control-plane logging types not enabled (`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`).
@@ -89,6 +90,7 @@ done
 ```
 
 Flag:
+
 - Node groups running a Kubernetes version behind the control plane (version skew risk).
 - Cluster on an EKS-deprecated version (check against current EKS release calendar).
 
@@ -124,6 +126,7 @@ done
 ```
 
 Flag:
+
 - Node group status not `ACTIVE` (e.g., `DEGRADED`, `CREATE_FAILED`, `UPDATE_FAILED`).
 - Health issues reported in `.nodegroup.health.issues`.
 - `maxUnavailable` not set in `updateConfig` (defaults to 1 — may be too slow or too risky).
@@ -151,6 +154,7 @@ aws autoscaling describe-auto-scaling-groups --region "$REGION" \
 ```
 
 Flag:
+
 - Fargate profiles in non-ACTIVE state.
 - Self-managed ASG desired capacity at maximum (scaling headroom exhausted).
 
@@ -183,6 +187,7 @@ aws iam list-roles --query 'Roles[].{RoleName:RoleName,Arn:Arn}' --output text 2
 ```
 
 Flag:
+
 - OIDC issuer URL present in the cluster but no matching OIDC provider registered in IAM (IRSA will not work).
 - No IRSA roles found (may mean pods are using node instance profile — broader permissions than needed).
 
@@ -218,6 +223,7 @@ done
 ```
 
 Flag:
+
 - Add-on status not `ACTIVE` (e.g., `DEGRADED`, `CREATE_FAILED`).
 - Add-on health issues.
 - Add-ons significantly behind latest available version for the cluster's Kubernetes version.
@@ -254,6 +260,7 @@ aws eks describe-addon --cluster-name "$CLUSTER" --addon-name vpc-cni --region "
 ```
 
 Flag:
+
 - Subnets with fewer than 20 available IPs (pod scheduling will fail as IPs are exhausted).
 - Cluster security group with overly broad inbound rules.
 - VPC CNI not managed as EKS add-on (harder to patch and update).
@@ -275,6 +282,7 @@ aws logs describe-log-groups --log-group-name-prefix "$LOG_GROUP" --region "$REG
 ```
 
 Flag:
+
 - Not all five log types enabled (`api`, `audit`, `authenticator`, `controllerManager`, `scheduler`).
 - Log group retention not set (logs stored indefinitely — cost risk).
 - Log group not found (logging enabled but logs not yet appearing — may be normal for new clusters).
@@ -303,6 +311,7 @@ kubectl get configmap aws-auth -n kube-system -o yaml 2>/dev/null \
 ```
 
 Flag:
+
 - Cluster role ARN does not match expected naming convention or account.
 - `aws-auth` ConfigMap grants `system:masters` to broad principals (IAM users, roles with `*`).
 - Access entries with `AmazonEKSClusterAdminPolicy` for non-admin identities.
