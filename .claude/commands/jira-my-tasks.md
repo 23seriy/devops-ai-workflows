@@ -1,11 +1,11 @@
 ---
-description: Fetch your open Jira issues from a project and save a dated markdown snapshot to ~/src/my_tasks/YYYY-MM-DD.md.
+description: Fetch your open Jira issues from a project and save a timestamped markdown snapshot to ~/src/my_tasks/YYYY-MM-DD-HHMM.md.
 argument-hint: "[PROJECT=<key>] [OUTPUT_DIR=~/src/my_tasks]"
 ---
 
 # /jira-my-tasks — My Open Jira Tasks
 
-Read-only. Queries the Jira REST API for all issues assigned to you that are not Done, groups them by status, and writes a dated markdown file you can open, share, or diff across days.
+Read-only. Queries the Jira REST API for all issues assigned to you that are not Done, groups them by status, and writes a timestamped markdown file you can open, share, or diff across runs — including multiple runs on the same day.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ Read-only. Queries the Jira REST API for all issues assigned to you that are not
 - **PROJECT** — Jira project key. Default: value of `JIRA_PROJECT` in `~/.jira-credentials`.
 - **OUTPUT_DIR** — Directory to write dated snapshots. Default: `~/src/my_tasks`.
 
-Safe to rerun: each run overwrites only today's `${OUTPUT_DIR}/YYYY-MM-DD.md` snapshot; no other state is touched.
+Safe to rerun: each run writes its own `${OUTPUT_DIR}/YYYY-MM-DD-HHMM.md` snapshot (timestamped to the minute), so running it more than once a day produces separate files instead of overwriting the earlier one; no other state is touched.
 
 ---
 
@@ -96,7 +96,8 @@ source ~/.jira-credentials
 PROJECT="${PROJECT:-$JIRA_PROJECT}"
 OUTPUT_DIR="${OUTPUT_DIR:-$HOME/src/my_tasks}"
 DATE=$(date +%Y-%m-%d)
-OUTPUT_FILE="${OUTPUT_DIR}/${DATE}.md"
+TIMESTAMP=$(date +%Y-%m-%d-%H%M)
+OUTPUT_FILE="${OUTPUT_DIR}/${TIMESTAMP}.md"
 
 python3 - "$RESPONSE_FILE" "$OUTPUT_FILE" "$DATE" "$JIRA_BASE_URL" << 'PYEOF'
 import json, sys
@@ -156,7 +157,7 @@ Print a brief summary:
 Example:
 
 ```text
-Wrote 29 issues to /Users/you/src/my_tasks/2026-07-07.md
+Wrote 29 issues to /Users/you/src/my_tasks/2026-07-07-0915.md
 
 In Progress        :  7
 Ready for Testing  :  4
