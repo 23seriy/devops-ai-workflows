@@ -70,6 +70,12 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | --- | --- | --- | --- |
 | [incident-triage](./.claude/commands/incident-triage.md) | `/incident-triage` | Guided first 15 minutes of a production incident: timeline, blast radius, evidence gathering, mitigation suggestions. | Access to affected environment. |
 
+### Productivity
+
+| Workflow | Slash command | Description | Prerequisites |
+| --- | --- | --- | --- |
+| [jira-my-tasks](./.claude/commands/jira-my-tasks.md) | `/jira-my-tasks` | Fetch your open Jira issues (not Done) and save a dated markdown snapshot to `~/src/my_tasks/YYYY-MM-DD.md`. Grouped by In Progress / Ready for Testing / Backlog. | `curl`, `python3`. `~/.jira-credentials` with API token. |
+
 More on the way — see [Roadmap](#roadmap).
 
 ## Prompts
