@@ -10,13 +10,15 @@ Read-only. Queries the Jira REST API for all issues assigned to you that are not
 ## Prerequisites
 
 - `~/.jira-credentials` with the following variables (chmod 600):
-  ```
+
+  ```text
   JIRA_BASE_URL=https://<org>.atlassian.net
   JIRA_EMAIL=<your-email>
   JIRA_TOKEN=<your-api-token>    # https://id.atlassian.com/manage-profile/security/api-tokens
   JIRA_ASSIGNEE_ID=<your-account-id>
   JIRA_PROJECT=<project-key>
   ```
+
 - `python3` (stdlib only — no pip installs).
 - `curl`.
 
@@ -146,13 +148,14 @@ rm -f "$RESPONSE_FILE"
 ## Step 4 — Report
 
 Print a brief summary:
+
 - Total issues fetched
 - Counts per section (In Progress / Ready for Testing / Backlog)
 - Full path to the output file
 
 Example:
 
-```
+```text
 Wrote 29 issues to /Users/you/src/my_tasks/2026-07-07.md
 
 In Progress        :  7
