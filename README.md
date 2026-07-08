@@ -74,7 +74,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 
 | Workflow | Slash command | Description | Prerequisites |
 | --- | --- | --- | --- |
-| [jira-my-tasks](./.claude/commands/jira-my-tasks.md) | `/jira-my-tasks` | Fetch your open Jira issues (not Done) and save a dated markdown snapshot to `~/src/my_tasks/YYYY-MM-DD.md`. Grouped by In Progress / Ready for Testing / Backlog. | `curl`, `python3`. `~/.jira-credentials` with API token. |
+| [jira-my-tasks](./.claude/commands/jira-my-tasks.md) | `/jira-my-tasks` | Fetch your open Jira issues (not Done) and save a timestamped markdown snapshot to `~/src/my_tasks/YYYY-MM-DD-HHMM.md`. Grouped by In Progress / Ready for Testing / Backlog. | `curl`, `python3`. `~/.jira-credentials` with API token. |
 
 More on the way — see [Roadmap](#roadmap).
 
