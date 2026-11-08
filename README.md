@@ -215,4 +215,3 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md). The short version:
 ## License
 
 [MIT](./LICENSE) — use freely, attribution appreciated but not required.
-
