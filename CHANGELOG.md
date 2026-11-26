@@ -6,10 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ## [Unreleased]
 
-### Added
+### Added — Workflows
+
+- `/aws-s3-audit` — read-only S3 security & hygiene audit: public access, bucket policies, ACLs, encryption, versioning, lifecycle, logging, and replication
+- `/github-actions-review` — security & reliability static analysis of GitHub Actions workflows: expression injection, permissions, unpinned actions, `pull_request_target` risks, secrets, cache poisoning
+- `/postgres-health` — read-only PostgreSQL health check: bloat, long/idle transactions, lock waits, replication lag, connections, index candidates, autovacuum
+
+### Added — Repo
 
 - Workflow request issue template and pull request checklist
 - `SECURITY.md`, `CODEOWNERS`, and `dependabot.yml` now listed in the README repo layout
+- New *Networking / Database* section in the README workflow tables
 
 ### Improved
 

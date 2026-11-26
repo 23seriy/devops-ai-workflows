@@ -42,6 +42,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [aws-rds-health](./.claude/commands/aws-rds-health.md) | `/aws-rds-health` | Read-only RDS/Aurora diagnostics: instance health, events, storage/I/O metrics, parameter groups, replication lag, backups, and security posture. | `aws` CLI. Optional: `jq`. |
 | [aws-lambda-debug](./.claude/commands/aws-lambda-debug.md) | `/aws-lambda-debug` | Read-only Lambda diagnostics: errors, throttles, duration percentiles, cold starts, DLQ, VPC/ENI, concurrency, event source mappings, layers, and IAM role. | `aws` CLI. Optional: `jq`. |
 | [aws-ecs-service-debug](./.claude/commands/aws-ecs-service-debug.md) | `/aws-ecs-service-debug` | Read-only ECS/Fargate service diagnostics: task rollout failures, stopped-task reasons, deployment circuit breaker, target group health, task IAM roles, and logs. | `aws` CLI. Optional: `jq`. |
+| [aws-s3-audit](./.claude/commands/aws-s3-audit.md) | `/aws-s3-audit` | Read-only S3 security & hygiene audit: public access, bucket policies, ACLs, encryption, versioning, lifecycle, logging, and replication. | `aws` CLI. Optional: `jq`. |
 
 ### IaC
 
@@ -57,6 +58,13 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [jenkins-pipeline-review](./.claude/commands/jenkins-pipeline-review.md) | `/jenkins-pipeline-review` | Review Jenkinsfile / shared-library Groovy for security risks, anti-patterns, missing error handling, credential leaks, CPS issues, and build config cross-references. | Jenkinsfile(s) or `vars/*.groovy`. Optional: `repositories_v2.json`. |
 | [release-checklist](./.claude/commands/release-checklist.md) | `/release-checklist` | Pre-release safety gate: scope, deploy order, rollback, tests, monitoring, and communication before production release. | PR/diff summary. Optional: test results, plans, diffs. |
 | [dockerfile-review](./.claude/commands/dockerfile-review.md) | `/dockerfile-review` | Review Dockerfiles for security, size, caching, and best practices. Flags CVE-prone bases, leaked secrets, missing health checks. | Dockerfile(s). Optional: `docker`, `trivy`. |
+| [github-actions-review](./.claude/commands/github-actions-review.md) | `/github-actions-review` | Security & reliability review of GitHub Actions workflows: expression injection, excessive permissions, unpinned actions, `pull_request_target` risks, secret handling, cache poisoning. | Workflow file(s). Optional: `actionlint`, `gh`, `yq`. |
+
+### Networking / Database
+
+| Workflow | Slash command | Description | Prerequisites |
+| --- | --- | --- | --- |
+| [postgres-health](./.claude/commands/postgres-health.md) | `/postgres-health` | Read-only PostgreSQL health check: bloat, long-running and idle-in-transaction queries, lock waits, replication lag, connection saturation, missing indexes, and autovacuum. | `psql` + a `pg_monitor` role. Optional: `pg_stat_statements`. |
 
 ### Security
 
@@ -178,7 +186,6 @@ Ideas I plan to add (PRs welcome):
 
 ### AWS / cloud
 
-- [ ] `/aws-s3-audit` — bucket policy, public-access-block, encryption, and lifecycle hygiene
 - [ ] `/aws-open-cost-allocation` — compare tag coverage across cost allocation reports and accounts
 
 ### IaC
@@ -189,7 +196,6 @@ Ideas I plan to add (PRs welcome):
 ### Containers & CI/CD
 
 - [ ] `/image-cve-triage` — prioritise CVE scanner output by exploitability + fix availability
-- [ ] `/github-actions-review` — security review of GitHub Actions workflow files
 
 ### Observability & incident
 
@@ -202,7 +208,6 @@ Ideas I plan to add (PRs welcome):
 
 - [ ] `/dns-debug` — multi-resolver dig, propagation, DNSSEC
 - [ ] `/tls-cert-audit` — chain inspection, expiry, weak ciphers across a list of hosts
-- [ ] `/postgres-health` — bloat, long queries, replication lag, missing indexes
 - [ ] `/redis-health` — memory pressure, slow log, persistence config, eviction patterns
 - [ ] `/db-migration-review` — flag risky migration patterns
 
