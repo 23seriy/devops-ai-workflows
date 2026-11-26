@@ -41,6 +41,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [aws-eks-debug](./.claude/commands/aws-eks-debug.md) | `/aws-eks-debug` | Read-only EKS diagnostics: cluster health, node groups, OIDC/IRSA, add-ons, VPC CNI networking, control-plane logging, version skew, and IAM access. | `aws` CLI. Optional: `kubectl`, `jq`. |
 | [aws-rds-health](./.claude/commands/aws-rds-health.md) | `/aws-rds-health` | Read-only RDS/Aurora diagnostics: instance health, events, storage/I/O metrics, parameter groups, replication lag, backups, and security posture. | `aws` CLI. Optional: `jq`. |
 | [aws-lambda-debug](./.claude/commands/aws-lambda-debug.md) | `/aws-lambda-debug` | Read-only Lambda diagnostics: errors, throttles, duration percentiles, cold starts, DLQ, VPC/ENI, concurrency, event source mappings, layers, and IAM role. | `aws` CLI. Optional: `jq`. |
+| [aws-ecs-service-debug](./.claude/commands/aws-ecs-service-debug.md) | `/aws-ecs-service-debug` | Read-only ECS/Fargate service diagnostics: task rollout failures, stopped-task reasons, deployment circuit breaker, target group health, task IAM roles, and logs. | `aws` CLI. Optional: `jq`. |
 
 ### IaC
 
@@ -154,12 +155,20 @@ devops-ai-workflows/
 │   ├── commands/            # Workflow definitions (Claude Code slash commands)
 │   ├── agents/              # Repo-maintenance subagents (workflow-author, ...)
 │   └── settings.json        # Shared allow/deny permissions
+├── .github/
+│   ├── workflows/ci.yml     # Validate + markdownlint + shellcheck
+│   ├── .markdownlint.json   # Lint config
+│   ├── dependabot.yml       # Weekly GitHub Actions updates
+│   ├── CODEOWNERS
+│   └── PULL_REQUEST_TEMPLATE.md
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files (auto-loaded via CLAUDE.md)
 ├── scripts/                 # Standalone shell helpers
+├── CHANGELOG.md
 ├── CLAUDE.md                # Claude Code project instructions
 ├── CONTRIBUTING.md
 ├── LICENSE
+├── SECURITY.md
 └── README.md
 ```
 
@@ -169,10 +178,8 @@ Ideas I plan to add (PRs welcome):
 
 ### AWS / cloud
 
-- [ ] `/aws-eks-debug` — bridge EKS + Kubernetes: node groups, OIDC, add-ons, IAM roles for service accounts
-- [ ] `/aws-rds-health` — RDS/Aurora diagnostics: events, metrics, parameter groups, replication lag
-- [ ] `/aws-lambda-debug` — Lambda diagnostics: errors, throttles, DLQ, VPC/ENI, CloudWatch logs
-- [ ] `/aws-ecs-service-debug` — ECS/Fargate service rollout failures: task events, target group health, IAM roles
+- [ ] `/aws-s3-audit` — bucket policy, public-access-block, encryption, and lifecycle hygiene
+- [ ] `/aws-open-cost-allocation` — compare tag coverage across cost allocation reports and accounts
 
 ### IaC
 

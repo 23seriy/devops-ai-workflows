@@ -1,3 +1,5 @@
 .superpowers/
 docs/superpowers/
 repo-health-reports/
+*-reports/
+CHANGELOG.md
