@@ -43,7 +43,7 @@ Thanks for helping grow this collection! The goal is a curated set of **safe, re
 
    Do not add editor-specific keys (`auto_execution_mode`, `model_provider`, etc.) — `validate-repo.sh` rejects them.
 
-2. **Register it** in the *Available workflows* table in [`README.md`](./README.md).
+2. **Register it** in the *Available workflows* table in [`README.md`](./README.md). `validate-repo.sh` fails if a workflow file is not listed there.
 
 3. **(Optional)** Run the in-repo `workflow-author` subagent for a pre-merge review:
 

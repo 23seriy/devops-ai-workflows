@@ -1,0 +1,39 @@
+name: Workflow request
+description: Suggest a new AI-agent workflow, prompt, or rule set.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea! Workflows are read-only diagnostic/review helpers, so describe the *investigation*, not a mutation you want automated.
+  - type: input
+    id: name
+    attributes:
+      label: Proposed slash command
+      description: Follow the existing naming convention.
+      placeholder: "/aws-s3-audit"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem it solves
+      description: What question would this workflow answer for you?
+      placeholder: "I keep needing to check bucket policies and public-access settings across accounts…"
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: What should it inspect?
+      description: Tools, commands, and the checks/findings it should surface.
+    validations:
+      required: false
+  - type: textarea
+    id: prereqs
+    attributes:
+      label: Prerequisites
+      description: Required CLIs, credentials, or permissions.
+      placeholder: "aws CLI, jq (optional)"
+    validations:
+      required: false

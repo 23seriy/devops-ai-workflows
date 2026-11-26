@@ -55,7 +55,7 @@ Before committing:
 ./scripts/validate-repo.sh
 ```
 
-Checks YAML frontmatter on every `.claude/commands/**/*.md` (presence of `description` and `argument-hint`), README local links, and script executability. CI (`.github/workflows/ci.yml`) runs the same checks plus markdownlint, shellcheck, and the markdown-link-check action.
+Checks YAML frontmatter on every `.claude/commands/**/*.md` (presence of `description` and `argument-hint`), that each workflow is registered in the README *Available workflows* table, README local links, balanced code fences in all markdown, and script executability. CI (`.github/workflows/ci.yml`) runs the same checks plus markdownlint, shellcheck, and the markdown-link-check action.
 
 ## Safety posture for the agent itself
 

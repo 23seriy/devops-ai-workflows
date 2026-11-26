@@ -10,6 +10,8 @@
 #   - no obsolete editor keys (auto_execution_mode, etc.)
 #   - subagent files (if any) have name + description in frontmatter
 #   - README links point to existing local files
+#   - every workflow is registered in the README *Available workflows* table
+#   - examples in docs use a balanced number of code fences
 #   - shell scripts are executable
 #   - .claude/settings.json parses as JSON
 #   - optional markdownlint/shellcheck if installed
@@ -108,6 +110,38 @@ done < <(grep -oE '\]\(\./[^)]+\)' README.md | sed -E 's/^.*\((.*)\)$/\1/' | sor
 echo ""
 
 # ────────────────────────────────────────────────────────────────
+# Workflows are registered in the README table
+# ────────────────────────────────────────────────────────────────
+echo "== Workflow registration in README =="
+unregistered=0
+while IFS= read -r file; do
+  name=$(basename "$file" .md)
+  if ! grep -q "\.claude/commands/${name}\.md" README.md; then
+    echo "❌ Workflow not listed in README table: /$name ($file)"
+    unregistered=$((unregistered + 1))
+    errors=$((errors + 1))
+  fi
+done < <(find .claude/commands -name '*.md' | sort)
+[ "$unregistered" -eq 0 ] && echo "✅ All workflows registered in README"
+echo ""
+
+# ────────────────────────────────────────────────────────────────
+# Balanced code fences in docs (catches examples that swallow the page)
+# ────────────────────────────────────────────────────────────────
+echo "== Code fence balance =="
+unbalanced=0
+while IFS= read -r file; do
+  fences=$(grep -cE '^```' "$file" || true)
+  if [ $((fences % 2)) -ne 0 ]; then
+    echo "❌ Odd number of code fences ($fences) in: $file"
+    unbalanced=$((unbalanced + 1))
+    errors=$((errors + 1))
+  fi
+done < <(find . -path ./.git -prune -o -name '*.md' -print | sort)
+[ "$unbalanced" -eq 0 ] && echo "✅ Code fences balanced"
+echo ""
+
+# ────────────────────────────────────────────────────────────────
 # Scripts are executable
 # ────────────────────────────────────────────────────────────────
 echo "== Script executability =="
@@ -152,11 +186,12 @@ fi
 # ────────────────────────────────────────────────────────────────
 if command -v markdownlint-cli2 >/dev/null 2>&1; then
   echo "== markdownlint-cli2 =="
-  markdownlint-cli2 '**/*.md' --config .github/.markdownlint.json || errors=$((errors + 1))
+  # CHANGELOG is excluded to match .markdownlintignore in CI.
+  markdownlint-cli2 '**/*.md' '#CHANGELOG.md' --config .github/.markdownlint.json || errors=$((errors + 1))
   echo ""
 elif command -v markdownlint >/dev/null 2>&1; then
   echo "== markdownlint =="
-  markdownlint '**/*.md' --config .github/.markdownlint.json || errors=$((errors + 1))
+  markdownlint '**/*.md' --ignore CHANGELOG.md --config .github/.markdownlint.json || errors=$((errors + 1))
   echo ""
 else
   echo "ℹ️ markdownlint not installed; skipping"

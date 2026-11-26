@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,13 +33,9 @@ jobs:
         continue-on-error: true
 
       - name: Lint markdown
+        # Ignore patterns come from .markdownlintignore so local and CI agree.
         uses: DavidAnson/markdownlint-cli2-action@v25.0.0
         with:
-          globs: |
-            **/*.md
-            !.superpowers/**
-            !docs/superpowers/**
-            !repo-health-reports/**
           config: '.github/.markdownlint.json'
 
   shellcheck:

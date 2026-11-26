@@ -2,13 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
+
+### Added
+
+- Workflow request issue template and pull request checklist
+- `SECURITY.md`, `CODEOWNERS`, and `dependabot.yml` now listed in the README repo layout
+
+### Improved
+
+- **`scripts/validate-repo.sh`** — now fails when a workflow under `.claude/commands/` is missing from the README *Available workflows* table, or when a markdown file has an unbalanced number of code fences
+- **CI** — runs on every pull request (plus `workflow_dispatch`); markdownlint ignores are sourced from `.markdownlintignore` so local and CI agree
+- README roadmap pruned of already-shipped workflows
+
+### Removed
+
+- Stale `prompts/.gitkeep`, `rules/.gitkeep`, `scripts/.gitkeep` (directories are populated)
+
+## [1.2.0] — Unreleased
 
 ### Added
 
 - `/k8s-storage-debug` — read-only Kubernetes storage stack debugger: pod → PVC → PV → StorageClass → CSI driver → node disk pressure, with severity-ranked markdown report
 
-## [1.2.0] — 2026-07-04
+### Added — Workflows
+
+- `/aws-ecs-service-debug` — read-only ECS/Fargate service diagnostics: rollout failures, stopped-task reasons, circuit breaker, target group health, task IAM roles, and logs
 
 ### Added — Claude Code
 
