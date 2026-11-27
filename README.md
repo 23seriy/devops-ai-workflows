@@ -49,6 +49,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | Workflow | Slash command | Description | Prerequisites |
 | --- | --- | --- | --- |
 | [terraform-plan-review](./.claude/commands/terraform-plan-review.md) | `/terraform-plan-review` | Explain a Terraform plan and flag risky changes: destroys, replacements, security group mutations, IAM changes, blast radius. | `terraform plan` output. Optional: `terraform` CLI, `jq`. |
+| [terraform-state-debug](./.claude/commands/terraform-state-debug.md) | `/terraform-state-debug` | Read-only Terraform state diagnostics: locks, drift, orphans, workspace mapping, and backend health. | `terraform` CLI. Optional: `jq`. |
 
 ### Containers & CI/CD
 
@@ -65,6 +66,10 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | Workflow | Slash command | Description | Prerequisites |
 | --- | --- | --- | --- |
 | [postgres-health](./.claude/commands/postgres-health.md) | `/postgres-health` | Read-only PostgreSQL health check: bloat, long-running and idle-in-transaction queries, lock waits, replication lag, connection saturation, missing indexes, and autovacuum. | `psql` + a `pg_monitor` role. Optional: `pg_stat_statements`. |
+| [redis-health](./.claude/commands/redis-health.md) | `/redis-health` | Read-only Redis health check: memory pressure and eviction, slow log, persistence, replication lag, connection saturation, keyspace, and dangerous config. | `redis-cli` + read access. |
+| [db-migration-review](./.claude/commands/db-migration-review.md) | `/db-migration-review` | Static review of DB migration scripts: locking DDL, long transactions, destructive/irreversible changes, unbatched backfills. Read-only. | Migration file(s). Optional: `sqlfluff`. |
+| [tls-cert-audit](./.claude/commands/tls-cert-audit.md) | `/tls-cert-audit` | Audit TLS across hosts: chain validity, expiry, weak protocols/ciphers, hostname match, HSTS. Read-only. | `openssl`. Optional: `nmap`, `curl`. |
+| [dns-debug](./.claude/commands/dns-debug.md) | `/dns-debug` | Diagnose DNS across resolvers: authoritative answers, propagation, CNAME chains, negative answers, DNSSEC. Read-only. | `dig`. Optional: `delv`. |
 
 ### Security
 
@@ -78,6 +83,7 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | Workflow | Slash command | Description | Prerequisites |
 | --- | --- | --- | --- |
 | [incident-triage](./.claude/commands/incident-triage.md) | `/incident-triage` | Guided first 15 minutes of a production incident: timeline, blast radius, evidence gathering, mitigation suggestions. | Access to affected environment. |
+| [prometheus-query-helper](./.claude/commands/prometheus-query-helper.md) | `/prometheus-query-helper` | Turn a plain-English monitoring intent into a validated PromQL query with rationale, cardinality notes, and an example alert. Read-only. | None. Optional: `curl`, `jq`, a Prometheus URL. |
 
 ### Productivity
 
@@ -193,7 +199,6 @@ Ideas I plan to add (PRs welcome):
 
 ### IaC
 
-- [ ] `/terraform-state-debug` — diagnose locks, drift, orphans
 - [ ] `/iac-secrets-scan` — repo-wide hardcoded-secret sweep
 
 ### Containers & CI/CD
@@ -202,17 +207,11 @@ Ideas I plan to add (PRs welcome):
 
 ### Observability & incident
 
-- [ ] `/prometheus-query-helper` — intent → PromQL with rationale
 - [ ] `/log-pattern-extract` — cluster repeated errors out of a log dump
 - [ ] `/postmortem` — blameless post-mortem from a transcript
 - [ ] `/runbook-from-incident` — turn a resolved incident into a reusable runbook
 
 ### Networking / database
-
-- [ ] `/dns-debug` — multi-resolver dig, propagation, DNSSEC
-- [ ] `/tls-cert-audit` — chain inspection, expiry, weak ciphers across a list of hosts
-- [ ] `/redis-health` — memory pressure, slow log, persistence config, eviction patterns
-- [ ] `/db-migration-review` — flag risky migration patterns
 
 ### Security & repo hygiene
 
