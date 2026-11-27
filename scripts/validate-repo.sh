@@ -194,6 +194,23 @@ check_repo() {
   echo ""
 
   # ────────────────────────────────────────────────────────────────
+  # Every release tag has a CHANGELOG section
+  # ────────────────────────────────────────────────────────────────
+  if git rev-parse --git-dir >/dev/null 2>&1 && [ -f CHANGELOG.md ]; then
+    echo "== Release tags vs CHANGELOG =="
+    missing_sections=0
+    for tag in $(git tag -l 'v*' 2>/dev/null); do
+      if ! grep -q "^## \[${tag#v}\]" CHANGELOG.md; then
+        echo "❌ Tag $tag has no '## [${tag#v}]' section in CHANGELOG.md"
+        missing_sections=$((missing_sections + 1))
+        errors=$((errors + 1))
+      fi
+    done
+    [ "$missing_sections" -eq 0 ] && echo "✅ All release tags documented in CHANGELOG"
+    echo ""
+  fi
+
+  # ────────────────────────────────────────────────────────────────
   # Scripts are executable
   # ────────────────────────────────────────────────────────────────
   echo "== Script executability =="

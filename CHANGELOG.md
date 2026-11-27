@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-11-27
+
 ### Added — Prompts
 
 - `cost-optimization.md` — prioritized cloud/cluster savings plan from billing or inventory data
@@ -16,6 +18,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 - `rules/database.md` — PostgreSQL/MySQL/Redis guardrails (read-only investigation, expand/contract, lock timeouts)
 - `rules/mcp-safety.md` — agent tool/MCP safety (least privilege, confirmation, no exfiltration, untrusted output)
+
+### Added — Release automation
+
+- **`.github/workflows/release.yml`** — on a `v*` tag push, extracts the version's `CHANGELOG.md` section and creates a GitHub Release
+- **`scripts/changelog-release-notes.sh`** — print a version's release notes from `CHANGELOG.md`
+- **`scripts/tag-release.sh`** — cut an annotated release tag after checking the changelog section, clean tree, and `main`
+- `validate-repo.sh` now fails if any `v*` tag has no matching `## [x.y.z]` changelog section
 
 ### Added — Docs
 
@@ -58,37 +67,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 ### Removed
 
 - Stale `prompts/.gitkeep`, `rules/.gitkeep`, `scripts/.gitkeep` (directories are populated)
-
-## [1.2.0] — Unreleased
-
-### Added
-
-- `/k8s-storage-debug` — read-only Kubernetes storage stack debugger: pod → PVC → PV → StorageClass → CSI driver → node disk pressure, with severity-ranked markdown report
-
-### Added — Workflows
-
-- `/aws-ecs-service-debug` — read-only ECS/Fargate service diagnostics: rollout failures, stopped-task reasons, circuit breaker, target group health, task IAM roles, and logs
-
-### Added — Claude Code
-
-- **`argument-hint`** frontmatter on every workflow — shows expected args inline in the slash-command picker
-- **`.claude/settings.json`** — shared project permissions: read-only bash allowlist + cluster/cloud-mutation denylist that enforces the repo's read-only contract at the tool layer
-- **`.claude/agents/workflow-author.md`** — repo subagent for reviewing new workflow files against the contribution rules
-- **CLAUDE.md `@`-imports** of `rules/devops-agent.md`, `rules/kubernetes.md`, `rules/terraform.md` so safety guardrails auto-load when Claude Code runs in this repo
-
-### Fixed
-
-- Removed bogus `auto_execution_mode: 2` frontmatter from `/k8s-upgrade-readiness` (left over from another editor)
-- `scripts/stale-branches.sh` no longer silently fails to skip the `main`/`master` branches (precedence bug in `||` + `&&` chain)
-- `scripts/*.sh` are now shellcheck-clean (argument flags converted to bash arrays, `read -r` used everywhere)
-- Markdownlint CI step now fails the build (removed `continue-on-error: true`)
-- Removed stale `/repo-health` roadmap TODO from README (shipped in v1.1.0)
-- `settings.local.json` removed from git tracking (machine-local permissions should not be shared)
-
-### Improved
-
-- **`scripts/validate-repo.sh`** — checks for `description` + `argument-hint` in every workflow, validates `.claude/settings.json` parses, validates subagent frontmatter
-- **CI** — split into 3 jobs (validate, markdown, shellcheck); shellcheck now actually installs and fails the build on findings; least-privilege `permissions:` block added
 
 ## [1.1.0] — 2026-06-02
 
@@ -136,6 +114,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - **`explain-like-a-senior.md`** — added prerequisite knowledge, safe validation, and team-question sections
 
 ---
+
+## [1.0.0] — 2026-05-15
+
+### Added
+
+- Initial tagged release: the Kubernetes, AWS, Helm, and IaC workflows, reusable prompts, and the `k8s-snapshot.sh` helper described under 0.1.0 (this entry back-fills the tag that was cut without a changelog section).
 
 ## [0.1.0] — 2026-05-04
 
