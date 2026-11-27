@@ -14,14 +14,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ### Added — Repo
 
+- **`AGENTS.md`** — cross-tool entry point (Codex, Cursor, Windsurf, Gemini CLI) that imports the safety rules and repo conventions
+- **`rules/aws.md`** — AWS-specific agent guardrails: identity/account verification, IAM change caution, secret redaction, destructive-op confirmation, cost awareness
+- **`scripts/tests/validate-repo.bats`** + `scripts/test-validate.sh` — unit tests for the validator (8 cases)
+- **`.pre-commit-config.yaml`** — markdownlint, shellcheck, actionlint, and validate-repo hooks mirroring CI
 - Workflow request issue template and pull request checklist
 - `SECURITY.md`, `CODEOWNERS`, and `dependabot.yml` now listed in the README repo layout
 - New *Networking / Database* section in the README workflow tables
 
 ### Improved
 
-- **`scripts/validate-repo.sh`** — now fails when a workflow under `.claude/commands/` is missing from the README *Available workflows* table, or when a markdown file has an unbalanced number of code fences
-- **CI** — runs on every pull request (plus `workflow_dispatch`); markdownlint ignores are sourced from `.markdownlintignore` so local and CI agree
+- **`scripts/validate-repo.sh`** — content-as-code checks on top of the structural ones:
+  - every workflow must describe a report/artifact path
+  - **read-only policy**: fails on ungated mutating commands (`kubectl delete/apply/scale`, `terraform apply/destroy`, `helm install/upgrade`, `aws … create/put/delete/terminate`, …) inside code fences unless the surrounding step opts in (`DEEP=yes`, `APPLY=yes`, `--dry-run`, or a "suggest/optional/confirm" gate); prose mentions are ignored
+  - still fails when a workflow is missing from the README table or a markdown file has unbalanced fences
+  - body extracted into a sourceable `check_repo()` function so it can be unit-tested
+- **CI** — plus an `actionlint` job and a bats test step; all Actions are now pinned to full commit SHAs (resolved with `gh api`)
 - README roadmap pruned of already-shipped workflows
 
 ### Removed

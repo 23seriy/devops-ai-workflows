@@ -107,6 +107,7 @@ Reusable, agent-agnostic safety rule sets. Reference them from a project's `CLAU
 | Rule file | What it does |
 | --- | --- |
 | [devops-agent.md](./rules/devops-agent.md) | Safety guardrails for AI in DevOps repos: never modify prod without confirmation, prefer read-only, never hardcode secrets, always check context, GitOps awareness, multi-repo coordination. |
+| [aws.md](./rules/aws.md) | AWS-specific: identity/account verification, IAM change caution, secret redaction, destructive-op confirmation, cost awareness, least-privilege read roles. |
 | [terraform.md](./rules/terraform.md) | Terraform-specific: state safety, ForceNew attribute warnings, provider/module pinning, workspace safety, import workflow, `prevent_destroy` reminders. |
 | [kubernetes.md](./rules/kubernetes.md) | Kubernetes-specific: context verification, dry-run first, Helm safety, ArgoCD/GitOps awareness, secret handling, debugging approach, RBAC best practices. |
 
@@ -171,13 +172,15 @@ devops-ai-workflows/
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files (auto-loaded via CLAUDE.md)
-├── scripts/                 # Standalone shell helpers
+├── scripts/                 # Standalone shell helpers + tests/
+├── AGENTS.md                # Cross-tool agent instructions (Codex/Cursor/…)
 ├── CHANGELOG.md
 ├── CLAUDE.md                # Claude Code project instructions
 ├── CONTRIBUTING.md
 ├── LICENSE
 ├── SECURITY.md
-└── README.md
+├── README.md
+└── .pre-commit-config.yaml
 ```
 
 ## Roadmap
