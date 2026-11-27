@@ -11,6 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - `/aws-s3-audit` — read-only S3 security & hygiene audit: public access, bucket policies, ACLs, encryption, versioning, lifecycle, logging, and replication
 - `/github-actions-review` — security & reliability static analysis of GitHub Actions workflows: expression injection, permissions, unpinned actions, `pull_request_target` risks, secrets, cache poisoning
 - `/postgres-health` — read-only PostgreSQL health check: bloat, long/idle transactions, lock waits, replication lag, connections, index candidates, autovacuum
+- `/terraform-state-debug` — read-only Terraform state diagnostics: locks, drift, orphans, workspace mapping, backend health
+- `/tls-cert-audit` — TLS audit across hosts: chain validity, expiry, weak protocols/ciphers, hostname match, HSTS
+- `/dns-debug` — DNS resolution diagnostics across resolvers: delegation, propagation, CNAME chains, DNSSEC
+- `/redis-health` — read-only Redis health: memory/eviction, slow log, persistence, replication, clients, config
+- `/db-migration-review` — static review of DB migrations: locking DDL, destructive/irreversible changes, unbatched backfills
+- `/prometheus-query-helper` — turns a plain-English intent into a validated PromQL query with rationale and cardinality notes
 
 ### Added — Repo
 
