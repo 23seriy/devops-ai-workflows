@@ -8,6 +8,8 @@ The repo's own safety posture applies to anything done in this repo too — thes
 
 - @rules/devops-agent.md
 - @rules/aws.md
+- @rules/database.md
+- @rules/mcp-safety.md
 - @rules/kubernetes.md
 - @rules/terraform.md
 
