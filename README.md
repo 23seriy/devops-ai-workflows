@@ -4,6 +4,10 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 
 > Note: "workflows" here means **Claude Code slash commands / AI-agent workflows** — *not* GitHub Actions.
 
+[![CI](https://github.com/23seriy/devops-ai-workflows/actions/workflows/ci.yml/badge.svg)](https://github.com/23seriy/devops-ai-workflows/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/23seriy/devops-ai-workflows?sort=semver)](https://github.com/23seriy/devops-ai-workflows/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
 ## What's inside
 
 | Folder | Purpose | Audience |
@@ -16,6 +20,23 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | [`scripts/`](./scripts) | Standalone shell scripts referenced by workflows | Anyone with a shell |
 
 ## Available workflows
+
+**Start from the scenario, not the tool.** Pick the row that matches what you're facing:
+
+| If you're… | Start with | Then |
+| --- | --- | --- |
+| **Something is down right now** | [`/incident-triage`](./.claude/commands/incident-triage.md) | [`/k8s-debug`](./.claude/commands/k8s-debug.md), [`/aws-eks-debug`](./.claude/commands/aws-eks-debug.md), [`/aws-rds-health`](./.claude/commands/aws-rds-health.md) |
+| **One workload is unhealthy** | [`/k8s-workload-debug`](./.claude/commands/k8s-workload-debug.md) | [`/k8s-storage-debug`](./.claude/commands/k8s-storage-debug.md), [`/helm-release-debug`](./.claude/commands/helm-release-debug.md) |
+| **A deploy / release is stuck** | [`/helm-release-debug`](./.claude/commands/helm-release-debug.md) | [`/ci-debug`](./.claude/commands/ci-debug.md), [`/release-checklist`](./.claude/commands/release-checklist.md) |
+| **CI is red** | [`/ci-debug`](./.claude/commands/ci-debug.md) | [`/jenkins-pipeline-review`](./.claude/commands/jenkins-pipeline-review.md), [`/github-actions-review`](./.claude/commands/github-actions-review.md) |
+| **Traffic can't reach a service** | [`/aws-vpc-debug`](./.claude/commands/aws-vpc-debug.md) | [`/dns-debug`](./.claude/commands/dns-debug.md), [`/tls-cert-audit`](./.claude/commands/tls-cert-audit.md) |
+| **A certificate expires / TLS breaks** | [`/tls-cert-audit`](./.claude/commands/tls-cert-audit.md) | [`/dns-debug`](./.claude/commands/dns-debug.md) |
+| **The database is slow or bloated** | [`/postgres-health`](./.claude/commands/postgres-health.md) | [`/redis-health`](./.claude/commands/redis-health.md), [`/db-migration-review`](./.claude/commands/db-migration-review.md) |
+| **A Terraform change is risky** | [`/terraform-plan-review`](./.claude/commands/terraform-plan-review.md) | [`/terraform-state-debug`](./.claude/commands/terraform-state-debug.md) |
+| **Security review / hardening** | [`/aws-account-audit`](./.claude/commands/aws-account-audit.md) | [`/k8s-rbac-audit`](./.claude/commands/k8s-rbac-audit.md), [`/secrets-leak-scan`](./.claude/commands/secrets-leak-scan.md), [`/github-actions-review`](./.claude/commands/github-actions-review.md) |
+| **Reduce cost** | [`/k8s-cost-hotspots`](./.claude/commands/k8s-cost-hotspots.md) | [`/aws-cost-quickscan`](./.claude/commands/aws-cost-quickscan.md) |
+| **Write a query / alert** | [`/prometheus-query-helper`](./.claude/commands/prometheus-query-helper.md) | — |
+| **Prepping a release or upgrade** | [`/release-checklist`](./.claude/commands/release-checklist.md) | [`/k8s-upgrade-readiness`](./.claude/commands/k8s-upgrade-readiness.md) |
 
 ### Kubernetes
 
@@ -91,6 +112,8 @@ A growing collection of **AI-agent workflows, prompts, and rules** for day-to-da
 | --- | --- | --- | --- |
 | [jira-my-tasks](./.claude/commands/jira-my-tasks.md) | `/jira-my-tasks` | Fetch your open Jira issues (not Done) and save a timestamped markdown snapshot to `~/src/my_tasks/YYYY-MM-DD-HHMM.md`. Grouped by In Progress / Ready for Testing / Backlog. | `curl`, `python3`. `~/.jira-credentials` with API token. |
 
+Want to see the output first? Browse [example reports](./docs/examples) from `/k8s-debug` and `/terraform-plan-review`.
+
 More on the way — see [Roadmap](#roadmap).
 
 ## Prompts
@@ -105,6 +128,9 @@ Reusable system prompts you can paste into any AI agent for common DevOps tasks:
 | [pr-description](./prompts/pr-description.md) | Generates a PR description from a diff: what, why, how, testing, risk, rollback plan. |
 | [explain-like-a-senior](./prompts/explain-like-a-senior.md) | Explains infrastructure code to junior engineers: what it does, why, gotchas, and how it fits together. |
 | [runbook-from-incident](./prompts/runbook-from-incident.md) | Converts incident notes or post-mortems into reusable runbooks with diagnosis, mitigation, escalation, and follow-up steps. |
+| [cost-optimization](./prompts/cost-optimization.md) | Produces a prioritized cloud/cluster savings plan from billing or inventory data, separating hard savings from avoided cost and commitment discounts. |
+| [dora-metrics](./prompts/dora-metrics.md) | Computes/interprets the four DORA metrics from deploy and incident data, with explicit definitions, medians, and data-gap confidence. |
+| [change-advisory](./prompts/change-advisory.md) | Writes an RFC-style change advisory: blast radius, ordered steps, rollback, monitoring, communication, and a clear approve/reject recommendation. |
 
 ## Rules
 
@@ -116,6 +142,8 @@ Reusable, agent-agnostic safety rule sets. Reference them from a project's `CLAU
 | [aws.md](./rules/aws.md) | AWS-specific: identity/account verification, IAM change caution, secret redaction, destructive-op confirmation, cost awareness, least-privilege read roles. |
 | [terraform.md](./rules/terraform.md) | Terraform-specific: state safety, ForceNew attribute warnings, provider/module pinning, workspace safety, import workflow, `prevent_destroy` reminders. |
 | [kubernetes.md](./rules/kubernetes.md) | Kubernetes-specific: context verification, dry-run first, Helm safety, ArgoCD/GitOps awareness, secret handling, debugging approach, RBAC best practices. |
+| [database.md](./rules/database.md) | Database-specific (PostgreSQL/MySQL/Redis): read-only investigation, expand/contract migrations, lock timeouts, `CONCURRENTLY`, redaction, EXPLAIN-based tuning. |
+| [mcp-safety.md](./rules/mcp-safety.md) | Agent tool/MCP guardrails: least-privilege tool use, confirmation before mutation, avoiding data exfiltration, treating tool output as untrusted. |
 
 ## Scripts
 
@@ -176,6 +204,7 @@ devops-ai-workflows/
 │   ├── dependabot.yml       # Weekly GitHub Actions updates
 │   ├── CODEOWNERS
 │   └── PULL_REQUEST_TEMPLATE.md
+├── docs/examples/           # Anonymised sample reports
 ├── prompts/                 # Reusable LLM prompts
 ├── rules/                   # Editor/agent rule files (auto-loaded via CLAUDE.md)
 ├── scripts/                 # Standalone shell helpers + tests/

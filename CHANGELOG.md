@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ## [Unreleased]
 
+### Added — Prompts
+
+- `cost-optimization.md` — prioritized cloud/cluster savings plan from billing or inventory data
+- `dora-metrics.md` — compute/interpret the four DORA metrics with explicit definitions and confidence
+- `change-advisory.md` — RFC-style change advisory with blast radius, rollback, and approve/reject
+
+### Added — Rules
+
+- `rules/database.md` — PostgreSQL/MySQL/Redis guardrails (read-only investigation, expand/contract, lock timeouts)
+- `rules/mcp-safety.md` — agent tool/MCP safety (least privilege, confirmation, no exfiltration, untrusted output)
+
+### Added — Docs
+
+- Scenario-based workflow index ("Something is down → …") at the top of the README
+- `docs/examples/` with anonymised sample reports from `/k8s-debug` and `/terraform-plan-review`
+- CI, release, and license badges in the README
+
 ### Added — Workflows
 
 - `/aws-s3-audit` — read-only S3 security & hygiene audit: public access, bucket policies, ACLs, encryption, versioning, lifecycle, logging, and replication
