@@ -7,6 +7,7 @@ DevOps AI workflows — read-only diagnostic and review workflows for Kubernetes
 The repo's own safety posture applies to anything done in this repo too — these rule files load automatically:
 
 - @rules/devops-agent.md
+- @rules/aws.md
 - @rules/kubernetes.md
 - @rules/terraform.md
 
