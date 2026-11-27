@@ -21,3 +21,6 @@ kubeconfig*
 
 # Claude Code local settings (machine-specific permissions)
 .claude/settings.local.json
+
+# bats installed by test-validate.sh
+.bats/

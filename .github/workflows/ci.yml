@@ -21,10 +21,12 @@ jobs:
       - name: Run validate-repo.sh (frontmatter, links, executability, policy)
         run: ./scripts/validate-repo.sh
 
+      - name: Install bats
+        run: git clone --depth 1 https://github.com/bats-core/bats-core.git
+          "$RUNNER_TEMP/bats-core" && "$RUNNER_TEMP/bats-core/install.sh" ./.bats
+
       - name: Run validator tests
-        run: |
-          npm install -g bats
-          bats scripts/tests/
+        run: ./.bats/bin/bats scripts/tests/
 
   markdown:
     name: Markdown lint & link check
