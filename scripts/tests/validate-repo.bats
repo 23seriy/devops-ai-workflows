@@ -129,3 +129,24 @@ EOF
   [ "$status" -ne 0 ]
   [[ "$output" == *"Missing 'argument-hint:'"* ]]
 }
+
+@test "fails when a release tag has no CHANGELOG section" {
+  write_workflow good 'Write `./good-reports/x.md`.'
+  ( cd "$FIXTURE" && git init -q && git add -A \
+    && git -c user.email=t@t -c user.name=t commit -qm init \
+    && git tag v9.9.9 ) >/dev/null 2>&1
+  printf '## [Unreleased]\n\n- x\n' > "$FIXTURE/CHANGELOG.md"
+  run_validator
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"Tag v9.9.9 has no"* ]]
+}
+
+@test "passes when every release tag has a CHANGELOG section" {
+  write_workflow good 'Write `./good-reports/x.md`.'
+  printf '## [Unreleased]\n\n- x\n\n## [9.9.9] — 2026-01-01\n\n- y\n' > "$FIXTURE/CHANGELOG.md"
+  ( cd "$FIXTURE" && git init -q && git add -A \
+    && git -c user.email=t@t -c user.name=t commit -qm init \
+    && git tag v9.9.9 ) >/dev/null 2>&1
+  run_validator
+  [ "$status" -eq 0 ]
+}

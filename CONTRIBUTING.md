@@ -87,6 +87,14 @@ The shared `.claude/settings.json` defines:
 
 If you add a new workflow that legitimately needs a denied command (e.g. a future `/apply-...` workflow gated behind `APPLY=yes`), discuss in the PR before relaxing the deny list — the read-only contract is the repo's whole value proposition.
 
+## Releasing
+
+Maintainers cut releases from `main`:
+
+1. Promote the `[Unreleased]` section to `## [x.y.z] — YYYY-MM-DD` in `CHANGELOG.md`.
+2. `./scripts/tag-release.sh x.y.z --push` — refuses if the section is missing, the tree is dirty, or you're not on `main`.
+3. The `Release` workflow publishes the GitHub Release from the changelog section. `validate-repo.sh` fails CI if any `v*` tag has no matching changelog section.
+
 ## PR checklist
 
 - [ ] `.claude/commands/<name>.md` added with `description` + `argument-hint` frontmatter

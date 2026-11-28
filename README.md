@@ -154,7 +154,9 @@ Standalone shell utilities referenced by workflows or useful on their own:
 | [k8s-snapshot.sh](./scripts/k8s-snapshot.sh) | `./k8s-snapshot.sh [namespace\|all] [output-dir]` — dump cluster state (nodes, pods, events, services, top) to a timestamped Markdown file. |
 | [aws-whoami.sh](./scripts/aws-whoami.sh) | `./aws-whoami.sh [profile]` — quick AWS identity check: caller, region, account alias, org, SSO role. |
 | [stale-branches.sh](./scripts/stale-branches.sh) | `./stale-branches.sh [days] [--remote]` — list git branches older than N days with last commit info. |
-| [validate-repo.sh](./scripts/validate-repo.sh) | `./scripts/validate-repo.sh` — validate workflow frontmatter, README links, script executability, and optional lint checks. |
+| [validate-repo.sh](./scripts/validate-repo.sh) | `./scripts/validate-repo.sh` — validate frontmatter, README registration, report paths, read-only policy, fence balance, release-tag/changelog parity, plus optional lint. |
+| [tag-release.sh](./scripts/tag-release.sh) | `./scripts/tag-release.sh <version> [--push]` — cut an annotated release tag after checking the changelog section, clean tree, and `main`. |
+| [changelog-release-notes.sh](./scripts/changelog-release-notes.sh) | `./scripts/changelog-release-notes.sh <version>` — print a version's section from `CHANGELOG.md` (used by the Release workflow). |
 
 ## Using a workflow
 
@@ -199,7 +201,8 @@ devops-ai-workflows/
 │   ├── agents/              # Repo-maintenance subagents (workflow-author, ...)
 │   └── settings.json        # Shared allow/deny permissions
 ├── .github/
-│   ├── workflows/ci.yml     # Validate + markdownlint + shellcheck
+│   ├── workflows/ci.yml     # Validate + lint + shellcheck + actionlint
+│   ├── workflows/release.yml # Tag → GitHub Release from CHANGELOG
 │   ├── .markdownlint.json   # Lint config
 │   ├── dependabot.yml       # Weekly GitHub Actions updates
 │   ├── CODEOWNERS
@@ -246,6 +249,19 @@ Ideas I plan to add (PRs welcome):
 
 - [ ] `/cve-impact-assessment` — given a CVE, check whether your stack is affected
 - [ ] `/dependency-upgrade-plan` — group outdated deps by risk and suggest batching
+
+## Releasing
+
+1. Move entries from `[Unreleased]` into a new `## [x.y.z] — YYYY-MM-DD` block in [`CHANGELOG.md`](./CHANGELOG.md).
+2. Cut and push the tag:
+
+   ```bash
+   ./scripts/tag-release.sh x.y.z --push
+   ```
+
+   The script refuses if the changelog lacks the section, the tree is dirty, or you are not on `main`.
+
+3. `.github/workflows/release.yml` runs on the tag, extracts the section with `changelog-release-notes.sh`, and creates the GitHub Release. `validate-repo.sh` also fails CI if any `v*` tag has no changelog section.
 
 ## Contributing
 
